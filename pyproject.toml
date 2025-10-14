@@ -1,0 +1,49 @@
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
+[project]
+name = "neurodatasets"
+description = "Utilities to download and interact with a curated collection of public neural datasets"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { file = "LICENSE" }
+authors = [{ name = "Raj Magesh Gauthaman", email = "neurodatasets@raj-magesh.org" }]
+keywords = [
+    "neural datasets",
+    "fMRI",
+    "EEG",
+    "MEG",
+    "Natural Scenes Dataset",
+    "THINGS datasets",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+]
+urls = { repository = "https://codeberg.org/raj-magesh/neurodatasets" }
+dependencies = [
+    "numpy",
+    "xarray[complete]",
+    "cf-xarray",
+    "netCDF4",
+    "nibabel",
+    "Pillow",
+]
+version = "0.1.0"  # FIXME(dynamic version): https://github.com/astral-sh/uv/issues/8714
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "pytest",
+    "sphinx",
+]
+
+[tool.uv]
+environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
