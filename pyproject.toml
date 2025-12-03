@@ -29,12 +29,20 @@ classifiers = [
 ]
 urls = { repository = "https://codeberg.org/raj-magesh/neurodatasets" }
 dependencies = [
+    "loguru",
+    "osfclient",
     "numpy",
-    "xarray[complete]",
-    "cf-xarray",
-    "netCDF4",
-    "nibabel",
+    "pandas",
+    "scipy",
     "Pillow",
+    "mat73",
+    "tqdm",
+    "nibabel",
+    "nilearn",
+    "fast-simplification",
+    "mne",
+    "torch",
+    "xarray", # FIXME add [complete] when llvmlite can build
 ]
 version = "0.1.0"  # FIXME(dynamic version): https://github.com/astral-sh/uv/issues/8714
 

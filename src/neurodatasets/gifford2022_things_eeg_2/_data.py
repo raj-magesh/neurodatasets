@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import xarray as xr
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 from osfclient.api import OSF
 
 from neurodatasets.files import unzip

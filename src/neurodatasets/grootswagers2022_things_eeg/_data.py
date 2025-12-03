@@ -6,7 +6,7 @@ import mne
 import numpy as np
 import pandas as pd
 import xarray as xr
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 
 from neurodatasets.files import s3
 
@@ -21,7 +21,7 @@ warnings.filterwarnings("ignore", category=RuntimeWarning, message="The data con
 
 IDENTIFIER = "grootswagers2022.things_eeg"
 BUCKET_NAME = "openneuro.org"
-CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER
 N_SUBJECTS = 50
 # SAMPLE_RATE = 1000
 DOWNSAMPLE_RATE = 250

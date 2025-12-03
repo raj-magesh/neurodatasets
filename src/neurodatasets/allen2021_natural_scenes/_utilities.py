@@ -2,11 +2,11 @@ from collections.abc import Collection, Mapping
 
 import numpy as np
 import xarray as xr
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 
 IDENTIFIER = "allen2021.natural_scenes"
 BUCKET_NAME = "natural-scenes-dataset"
-CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER
 N_SUBJECTS = 8
 
 

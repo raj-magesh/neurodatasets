@@ -5,12 +5,12 @@ import numpy.typing as npt
 import pandas as pd
 import scipy
 import xarray as xr
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 
 from neurodatasets.files import osf
 
 IDENTIFIER = "hebart2023.things-data"
-CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER / "behavior"
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER / "behavior"
 
 
 def load_embeddings() -> xr.DataArray:

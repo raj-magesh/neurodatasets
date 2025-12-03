@@ -1,5 +1,5 @@
 import xarray as xr
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 from scipy.sparse.linalg import eigsh
 
 IDENTIFIER = "stringer2019.mouse"
@@ -34,7 +34,7 @@ SESSIONS = (
     },
 )
 DUPLICATE_MOUSE = 6
-CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER
 N_STIMULI = 2_800
 
 

@@ -6,7 +6,7 @@ from typing import Self
 import numpy as np
 import pandas as pd
 import xarray as xr
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.allen2021_natural_scenes._utilities import (
     BUCKET_NAME,
     CACHE_PATH,
@@ -28,7 +28,7 @@ N_STUFF_CATEGORIES = 91
 def download_text_annotations(*, force: bool = False) -> Path:
     url = "https://github.com/bgshih/cocotext/releases/download/dl/cocotext.v2.zip"
 
-    directory = BONNER_DATASETS_HOME / "coco"
+    directory = NEURODATASETS_HOME / "coco"
 
     filepath = download_from_url(
         url,
@@ -46,7 +46,7 @@ def download_annotations(*, force: bool = False) -> Path:
         "stuff_annotations": "http://images.cocodataset.org/annotations/stuff_annotations_trainval2017.zip",
     }
 
-    directory = BONNER_DATASETS_HOME / "coco"
+    directory = NEURODATASETS_HOME / "coco"
     for label, url in urls.items():
         filepath = download_from_url(
             url,

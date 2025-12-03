@@ -3,7 +3,7 @@ __all__ = (
     "create_roi_selector",
 )
 
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.allen2021_natural_scenes._utilities import (
     compute_shared_stimuli,
     create_roi_selector,
@@ -11,5 +11,5 @@ from neurodatasets.allen2021_natural_scenes._utilities import (
 
 IDENTIFIER = "gifford2025.nsd_synthetic"
 BUCKET_NAME = "natural-scenes-dataset"
-CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER
 N_SUBJECTS = 8

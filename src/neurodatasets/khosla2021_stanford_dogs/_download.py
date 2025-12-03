@@ -3,14 +3,14 @@ from typing import Self
 
 import pandas as pd
 import scipy
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 from PIL import Image
 from torch.utils.data import Dataset
 
 from neurodatasets.files import download_from_url, untar
 
 IDENTIFIER = "khosla2021.stanford-dogs"
-CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER
 
 
 def download_dataset(*, force: bool = False) -> None:
@@ -29,7 +29,7 @@ def download_dataset(*, force: bool = False) -> None:
 def load_metadata() -> pd.DataFrame:
     download_dataset()
     metadata = scipy.io.loadmat(
-        BONNER_DATASETS_HOME / IDENTIFIER / "file_list.mat",
+        NEURODATASETS_HOME / IDENTIFIER / "file_list.mat",
         simplify_cells=True,
     )
     metadata = pd.DataFrame(
@@ -71,7 +71,7 @@ class StimulusSet(Dataset):
     def __getitem__(self: Self, idx: int) -> Image.Image:
         metadata = dict(self.metadata.iloc[idx].items())
         filepath = (
-            BONNER_DATASETS_HOME
+            NEURODATASETS_HOME
             / IDENTIFIER
             / "Images"
             / f"{metadata['synset']}-{metadata['category']}"

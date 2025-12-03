@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 
 from neurodatasets.files import s3
 
 IDENTIFIER = "iarpa.microns"
-CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER
 
 
 def download() -> None:

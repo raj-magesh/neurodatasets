@@ -1,14 +1,14 @@
 from typing import Self
 
 import pandas as pd
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 from PIL import Image
 from torch.utils.data import Dataset
 
 from neurodatasets.files import download_from_url, unzip
 
 IDENTIFIER = "hebart2019.things"
-CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER
 URL = "https://files.osf.io/v1/resources/jum2f/providers/osfstorage/?zip="
 
 PASSWORD = "things4all"
@@ -25,12 +25,14 @@ def download_stimuli(*, force: bool = False) -> None:
     download_from_url(URL, filepath=path, force=force)
 
     unzip(path, extract_dir=CACHE_PATH, password=PASSWORD, remove_zip=False)
-    unzip(
-        CACHE_PATH / "_image_database_things.zip",
-        extract_dir=CACHE_PATH / "images",
-        remove_zip=False,
-        password=PASSWORD.encode(),
-    )
+
+    for zip_file in ("images_THINGS.zip", "images_THINGSplus-CC0.zip"):
+        unzip(
+            CACHE_PATH / zip_file,
+            extract_dir=CACHE_PATH / "images",
+            remove_zip=False,
+            password=PASSWORD.encode(),
+        )
 
 
 def load_metadata() -> pd.DataFrame:

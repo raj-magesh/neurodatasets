@@ -7,13 +7,13 @@ import nibabel as nib
 import numpy as np
 import pandas as pd
 import xarray as xr
-from neurodatasets._utilities import BONNER_DATASETS_HOME
+from neurodatasets._utilities import NEURODATASETS_HOME
 from tqdm.auto import tqdm
 
 from neurodatasets.files import download_from_url, untar, unzip
 
 IDENTIFIER = "hebart2023.things-data"
-CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER / "fmri"
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER / "fmri"
 URLS = {
     "meg.tar.gz": "https://plus.figshare.com/ndownloader/files/37650461",
     "fmri_betas.tar.gz": "https://plus.figshare.com/ndownloader/files/36806148",
