@@ -38,8 +38,8 @@ def create_data_assembly(subject: int) -> xr.DataArray:
 
     roi_indices = loadmat(FILENAMES["rois"][subject], simplify_cells=True)["indices"]
     hemisphere = np.full(n_voxels, fill_value="", dtype="<U1")
-    for roi, _hemisphere in itertools.product(ROIS.keys(), ("L", "R")):
-        hemisphere[roi_indices[roi][_hemisphere]] = _hemisphere
+    for roi, hemisphere_ in itertools.product(ROIS.keys(), ("L", "R")):
+        hemisphere[roi_indices[roi][hemisphere_]] = hemisphere_
 
     noise_ceilings = loadmat(FILENAMES["noise_ceilings"][subject], simplify_cells=True)
 

@@ -25,7 +25,7 @@ CACHE_PATH = BONNER_DATASETS_HOME / IDENTIFIER
 N_SUBJECTS = 10
 
 
-def _download_osf_project(project_id, save_path, use_cached=True):
+def _download_osf_project(project_id, save_path, use_cached=True) -> None:
     osf = OSF()
     project = osf.project(project_id)
     storage = project.storage("osfstorage")
@@ -34,7 +34,7 @@ def _download_osf_project(project_id, save_path, use_cached=True):
         Path(save_path).mkdir(exist_ok=True, parents=True)
         for file in storage.files:
             file_path = os.path.join(save_path, file.path.lstrip("/"))
-            Path(os.path.dirname(file_path)).mkdir(exist_ok=True, parents=True)
+            Path(Path(file_path).parent).mkdir(exist_ok=True, parents=True)
             with Path(file_path).open("wb") as local_file:
                 file.write_to(local_file)
 
@@ -42,7 +42,7 @@ def _download_osf_project(project_id, save_path, use_cached=True):
                 file_path = unzip(Path(file_path), extract_dir=save_path)
 
 
-def download_dataset(preprocess_type: str = "preprocessed"):
+def download_dataset(preprocess_type: str = "preprocessed") -> None:
     match preprocess_type:
         case "preprocessed":
             _download_osf_project(
@@ -54,7 +54,8 @@ def download_dataset(preprocess_type: str = "preprocessed"):
         case "source":
             pass
         case _:
-            raise ValueError(f"Invalid data type: {preprocess_type}")
+            msg = f"Invalid data type: {preprocess_type}"
+            raise ValueError(msg)
 
 
 def load_metadata(
@@ -78,14 +79,14 @@ def load_preprocessed_data(
     subject: int,
     downsample_freq: int = 100,
     data_type: str = "train",
-    l_freq: float = None,
-    h_freq: float = None,
+    l_freq: float | None = None,
+    h_freq: float | None = None,
     tmin: float = -0.2,
     tmax: float = 0.8,
-    window_size: (float) = None,
-    window_step: (float) = None,
-    baseline: set[float, float] = None,
-    scale: (str | float) = None,
+    window_size: (float | None) = None,
+    window_step: (float | None) = None,
+    baseline: set[float, float] | None = None,
+    scale: (str | float | None) = None,
 ) -> tuple[xr.DataArray, pd.DataFrame]:
     if downsample_freq == 100:
         download_dataset(preprocess_type="preprocessed")
@@ -113,14 +114,13 @@ def load_preprocessed_data(
                 "time": times,
             },
         )
-        data = data.assign_coords(
+        return data.assign_coords(
             {column: ("object", metadata[column]) for column in METADATA_COLUMNS},
         )
-        return data
     download_dataset(preprocess_type="raw")
     # TODO: implement method using raw-type data
     return None
 
 
-def load_stimuli():
+def load_stimuli() -> None:
     pass

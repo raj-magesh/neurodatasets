@@ -1,7 +1,7 @@
 import contextlib
 import itertools
-from collections.abc import Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import nibabel as nib
 import numpy as np
@@ -11,6 +11,9 @@ from tqdm.auto import tqdm
 
 from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import download_from_url, untar, unzip
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 IDENTIFIER = "hebart2023.things-data"
 CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER / "fmri"
@@ -120,8 +123,7 @@ def load_receptive_fields(subject: int) -> xr.DataArray:
             filepath=CACHE_PATH / "downloads" / filename,
             force=False,
         )
-        filepath = unzip(filepath, remove_zip=False, extract_dir=CACHE_PATH / "rois")
-        return filepath
+        return unzip(filepath, remove_zip=False, extract_dir=CACHE_PATH / "rois")
 
     def _package() -> xr.DataArray:
         quantities = {

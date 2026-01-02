@@ -1,6 +1,5 @@
 import itertools
-from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import mat73
 import numpy as np
@@ -13,6 +12,9 @@ from neurodatasets.papale2025_tvsd._utilities import (
     CACHE_PATH,
     IDENTIFIER,
 )
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 ROIS = {
     "F": {

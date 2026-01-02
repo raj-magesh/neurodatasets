@@ -1,7 +1,11 @@
-import xarray as xr
+from typing import TYPE_CHECKING
+
 from scipy.sparse.linalg import eigsh
 
 from neurodatasets._utilities import NEURODATASETS_HOME
+
+if TYPE_CHECKING:
+    import xarray as xr
 
 IDENTIFIER = "stringer2019.mouse"
 SESSIONS = (

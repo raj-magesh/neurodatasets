@@ -1,9 +1,13 @@
-from pathlib import Path
+
+from typing import TYPE_CHECKING
 
 import requests
 from loguru import logger
 
 from neurodatasets.files._utilities import prepare_filepath
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 def download(

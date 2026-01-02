@@ -1,5 +1,9 @@
-import numpy as np
+from typing import TYPE_CHECKING
+
 from scipy.io import loadmat
+
+if TYPE_CHECKING:
+    import numpy as np
 
 IDENTIFIER = "bonner2021.object2vec"
 N_SUBJECTS = 4

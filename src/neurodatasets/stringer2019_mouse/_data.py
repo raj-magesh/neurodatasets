@@ -1,4 +1,5 @@
-from pathlib import Path
+
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -9,6 +10,9 @@ from scipy.io import loadmat
 from neurodatasets.files import download_from_url
 from neurodatasets.files.figshare import get_url_dict
 from neurodatasets.stringer2019_mouse._utilities import CACHE_PATH
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 FIGSHARE_ARTICLE_ID = 6845348
 

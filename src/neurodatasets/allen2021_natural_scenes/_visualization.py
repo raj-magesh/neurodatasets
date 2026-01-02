@@ -1,13 +1,12 @@
 """Adapted from https://github.com/cvnlab/nsdcode."""
 
 from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import fast_simplification
 import nibabel as nib
 import numpy as np
 import xarray as xr
-from matplotlib.axes import Axes
 from nilearn.datasets import fetch_surf_fsaverage
 from nilearn.plotting import plot_surf_roi, plot_surf_stat_map
 from nilearn.surface import load_surf_data, load_surf_mesh, vol_to_surf
@@ -16,6 +15,9 @@ from scipy.ndimage import map_coordinates
 from neurodatasets.allen2021_natural_scenes import load_brain_mask
 from neurodatasets.allen2021_natural_scenes._utilities import BUCKET_NAME, CACHE_PATH
 from neurodatasets.files import s3
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
 
 MNI_SHAPE = (182, 218, 182)
 MNI_ORIGIN = np.asarray([183 - 91, 127, 73]) - 1

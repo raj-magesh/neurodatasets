@@ -1,9 +1,11 @@
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import requests
 
 from neurodatasets.files._utilities import prepare_filepath
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 def download(
@@ -27,7 +29,6 @@ def download(
 
     response = session.get(url, params={"id": file_id, "confirm": 1}, stream=True)
     token = _get_confirm_token(response)
-    print(response, token)
 
     if token:
         params = {"id": file_id, "confirm": token}

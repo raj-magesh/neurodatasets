@@ -1,9 +1,14 @@
-from collections.abc import Collection, Mapping
+
+from typing import TYPE_CHECKING
 
 import numpy as np
-import xarray as xr
 
 from neurodatasets._utilities import NEURODATASETS_HOME
+
+if TYPE_CHECKING:
+    from collections.abc import Collection, Mapping
+
+    import xarray as xr
 
 IDENTIFIER = "allen2021.natural_scenes"
 BUCKET_NAME = "natural-scenes-dataset"

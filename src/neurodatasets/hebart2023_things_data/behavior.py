@@ -166,16 +166,13 @@ def load_densely_sampled_triplet_categories() -> set[str]:
         directory=CACHE_PATH,
         files={f"/{directory / filename}" for filename in filenames},
     )
-    objects = {
+    return {
         object_.replace(" ", "_")
         for object_ in scipy.io.loadmat(
             CACHE_PATH / directory / filenames[0],
             simplify_cells=True,
         )["words48"]
     }
-    return (
-        objects  # FIXME(add camera1/camera2 or file1/file2 instead of camera and file)
-    )
     # objects.remove("camera")
 
 

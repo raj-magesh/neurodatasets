@@ -1,17 +1,20 @@
 import copy
-from collections.abc import Sequence
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import nibabel as nib
 import numpy as np
 import xarray as xr
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+    from pathlib import Path
 
 
 def to_dataarray(
     filepath: Path,
     *,
     dims: Sequence[str] = ("x", "y", "z"),
-    flatten: dict[str, Sequence[str]] = {"neuroid": ("x", "y", "z")},
+    flatten: dict[str, Sequence[str]] | None = None,
 ) -> xr.DataArray:
     """Format an NII file as a DataArray.
 
@@ -25,6 +28,8 @@ def to_dataarray(
         brain volume
 
     """
+    if flatten is None:
+        flatten = {"neuroid": ("x", "y", "z")}
     nii = nib.load(filepath).get_fdata()
 
     nii = xr.DataArray(

@@ -1,9 +1,7 @@
-from collections.abc import Sequence
 from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import numpy as np
-import pandas as pd
 import xarray as xr
 from scipy.io import loadmat
 
@@ -13,6 +11,11 @@ from neurodatasets.files import s3
 
 from ._stimuli import load_stimulus_information
 from ._utilities import BUCKET_NAME, CACHE_PATH
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    import pandas as pd
 
 
 def load_presentations() -> pd.DataFrame:

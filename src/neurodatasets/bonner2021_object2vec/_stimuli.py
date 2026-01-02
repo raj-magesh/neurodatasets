@@ -26,7 +26,7 @@ def create_stimulus_set() -> pd.DataFrame:
     paths = [
         path
         for path in sorted(Path("stimuli").rglob("*.*"))
-        if path.suffix in (".jpg", ".png")
+        if path.suffix in {".jpg", ".png"}
     ]
     stimulus_set = pd.DataFrame.from_dict(
         {

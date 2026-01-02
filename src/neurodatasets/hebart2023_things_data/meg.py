@@ -1,7 +1,11 @@
-from pathlib import Path
+
+from typing import TYPE_CHECKING
 
 from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import download_from_url, untar
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 IDENTIFIER = "hebart2023.things-data"
 CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER / "meg"
@@ -20,9 +24,8 @@ def download_dataset(*, preprocessed: bool = True) -> Path:
         url,
         filepath=CACHE_PATH / "downloads" / f"preprocessed={preprocessed}.tar.gz",
     )
-    filepath = untar(
+    return untar(
         filepath,
         extract_dir=CACHE_PATH / "preprocessed",
         remove_tar=False,
     )
-    return filepath

@@ -20,7 +20,6 @@ from neurodatasets.files.figshare import get_url_dict
 
 def download_dataset(*, force: bool = False) -> None:
     urls = get_url_dict(FIGSHARE_ARTICLE_ID_V2)
-    print(urls)
 
     for subject in tqdm(range(N_SUBJECTS), desc="subject", leave=False):
         filenames = [

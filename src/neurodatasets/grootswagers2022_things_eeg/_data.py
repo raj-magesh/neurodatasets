@@ -31,7 +31,7 @@ N_STIM_VALIDATION = 2400
 EXCLUDED_SUBJECTS = [1, 6, 18, 23]
 
 
-def download_dataset():
+def download_dataset() -> None:
     """Download the data from the Grootswagers et al. (2022) THINGS EEG dataset."""
     s3_path = Path("ds003825")
     s3.download(
@@ -45,15 +45,15 @@ def download_dataset():
 def load_preprocessed_data(
     subject: int,
     downsample_freq: int = 250,
-    l_freq: float = None,
-    h_freq: float = None,
+    l_freq: float | None = None,
+    h_freq: float | None = None,
     tmin: float = -0.1,
     tmax: float = 1.0,
     is_validation: bool = False,
-    window_size: (float) = None,
-    window_step: (float) = None,
-    baseline: set[float, float] = None,
-    scale: (str | float) = None,
+    window_size: (float | None) = None,
+    window_step: (float | None) = None,
+    baseline: set[float, float] | None = None,
+    scale: (str | float | None) = None,
 ) -> tuple[xr.DataArray, pd.DataFrame]:
     # download_dataset()
     event_csv = pd.read_csv(
@@ -62,10 +62,9 @@ def load_preprocessed_data(
         / "eeg"
         / f"sub-{subject:02d}_task-rsvp_events.csv",
     )
-    if is_validation:
-        if len(event_csv) != N_STIM_MAIN + N_STIM_VALIDATION:
-            logging.warning("Validation data is not available for this subject.")
-            return None, None
+    if is_validation and len(event_csv) != N_STIM_MAIN + N_STIM_VALIDATION:
+        logging.warning("Validation data is not available for this subject.")
+        return None, None
 
     x = mne.io.read_raw_eeglab(
         CACHE_PATH
@@ -118,11 +117,11 @@ def load_preprocessed_data(
         if isinstance(scale, str):
             match scale:
                 case "original":
-                    data = data * 1e6
+                    data *= 1e6
                 case "std":
-                    data = data / data.std()
+                    data /= data.std()
         else:
-            data = data / scale
+            data /= scale
 
     data = xr.DataArray(
         data=data,
@@ -158,5 +157,5 @@ def load_preprocessed_data(
     return data[:N_STIM_MAIN], df[:N_STIM_MAIN]
 
 
-def load_stimuli():
+def load_stimuli() -> None:
     pass
