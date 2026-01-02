@@ -2,12 +2,13 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.io import loadmat
+
 from neurodatasets.bonner2021_object2vec._utilities import (
     FILENAMES,
     N_SUBJECTS,
     load_conditions,
 )
-from scipy.io import loadmat
 
 
 def create_stimulus_set() -> pd.DataFrame:

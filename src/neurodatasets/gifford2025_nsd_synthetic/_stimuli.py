@@ -27,7 +27,8 @@ def load_stimulus_information() -> pd.DataFrame:
         local_path=CACHE_PATH / filepath,
     )
     return (
-        pd.read_csv(CACHE_PATH / filepath)
+        pd
+        .read_csv(CACHE_PATH / filepath)
         .drop(columns=["Image number", "Image subclass number", "Image class number"])
         .rename(
             columns={
@@ -53,7 +54,8 @@ def load_shared_stimuli() -> xr.DataArray:
         local_path=CACHE_PATH / filepath,
     )
     return (
-        xr.open_dataarray(CACHE_PATH / filepath)
+        xr
+        .open_dataarray(CACHE_PATH / filepath)
         .rename(
             {
                 "phony_dim_0": "stimulus",
@@ -93,7 +95,8 @@ def load_unshared_stimuli(subject: int) -> xr.DataArray:
         local_path=CACHE_PATH / filepath,
     )
     return (
-        xr.open_dataarray(CACHE_PATH / filepath)
+        xr
+        .open_dataarray(CACHE_PATH / filepath)
         .rename(
             {
                 "phony_dim_0": "stimulus",

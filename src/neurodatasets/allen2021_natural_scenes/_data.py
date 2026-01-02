@@ -1,19 +1,21 @@
-from collections.abc import Sequence
 from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 import pandas as pd
 import xarray as xr
+from tqdm.auto import tqdm
+
 from neurodatasets._utilities import nii
 from neurodatasets.allen2021_natural_scenes._stimuli import load_nsd_metadata
 from neurodatasets.allen2021_natural_scenes._utilities import (
     BUCKET_NAME,
     CACHE_PATH,
 )
-from tqdm.auto import tqdm
-
 from neurodatasets.files import s3
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 RESOLUTION = "1pt8mm"
 PREPROCESSING = "fithrf_GLMdenoise_RR"
@@ -43,8 +45,7 @@ def load_brain_mask(
     subject: int,
     resolution: Literal["1mm", "1pt8mm"],
 ) -> xr.DataArray:
-    """
-    Load and format a Boolean brain mask for the functional data.
+    """Load and format a Boolean brain mask for the functional data.
 
     Args:
     ----
@@ -104,8 +105,7 @@ def load_betas(
     z_score: bool,
     neuroid_filter: Sequence[bool] | bool = True,
 ) -> xr.DataArray:
-    """
-    Load betas.
+    """Load betas.
 
     Args:
     ----
@@ -267,8 +267,7 @@ def load_ncsnr(
     resolution: Literal["1mm", "1pt8mm"],
     preprocessing: Literal["fithrf", "fithrf_GLMdenoise_RR"],
 ) -> xr.DataArray:
-    """
-    Load and format noise-ceiling signal-to-noise ratios (NCSNR).
+    """Load and format noise-ceiling signal-to-noise ratios (NCSNR).
 
     Args:
     ----
@@ -298,8 +297,7 @@ def load_structural_scans(
     subject: int,
     resolution: Literal["1mm", "1pt8mm"],
 ) -> xr.DataArray:
-    """
-    Load and format the structural scans registered to the functional data.
+    """Load and format the structural scans registered to the functional data.
 
     Args:
     ----
@@ -333,8 +331,7 @@ def load_structural_scans(
 
 
 def load_rois(*, subject: int, resolution: Literal["1mm", "1pt8mm"]) -> xr.DataArray:
-    """
-    Load the ROI masks for a subject.
+    """Load the ROI masks for a subject.
 
     Args:
     ----
@@ -418,8 +415,7 @@ def load_receptive_fields(
     subject: int,
     resolution: Literal["1mm", "1pt8mm"],
 ) -> xr.DataArray:
-    """
-    Load population receptive field mapping data.
+    """Load population receptive field mapping data.
 
     Args:
     ----
@@ -466,8 +462,7 @@ def load_functional_contrasts(
     subject: int,
     resolution: Literal["1mm", "1pt8mm"],
 ) -> xr.DataArray:
-    """
-    Load functional contrasts.
+    """Load functional contrasts.
 
     Args:
     ----

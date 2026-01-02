@@ -3,6 +3,8 @@ import itertools
 import nibabel as nib
 import numpy as np
 import xarray as xr
+from scipy.io import loadmat
+
 from neurodatasets.bonner2021_object2vec._utilities import (
     BRAIN_DIMENSIONS,
     FILENAMES,
@@ -11,12 +13,10 @@ from neurodatasets.bonner2021_object2vec._utilities import (
     URLS,
     load_conditions,
 )
-from scipy.io import loadmat
 
 
 def create_data_assembly(subject: int) -> xr.DataArray:
-    """
-    Load and format functional activations.
+    """Load and format functional activations.
 
     Args:
     ----
@@ -45,7 +45,8 @@ def create_data_assembly(subject: int) -> xr.DataArray:
 
     # TODO check whether MATLAB's ordering differs from Python (FORTRAN vs C)
     return (
-        xr.DataArray(
+        xr
+        .DataArray(
             data=activations,
             dims=("condition", "neuroid", "repetition"),
             coords={
@@ -73,7 +74,8 @@ def create_data_assembly(subject: int) -> xr.DataArray:
             {
                 f"contrast_{contrast}": (
                     "neuroid",
-                    nib.load(FILENAMES["contrasts"][contrast][subject])
+                    nib
+                    .load(FILENAMES["contrasts"][contrast][subject])
                     .get_fdata()
                     .reshape(-1),
                 )

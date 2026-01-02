@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from neurodatasets._utilities import NEURODATASETS_HOME
-
 from neurodatasets.files import s3
 
 IDENTIFIER = "iarpa.microns"

@@ -2,6 +2,7 @@ from collections.abc import Collection, Mapping
 
 import numpy as np
 import xarray as xr
+
 from neurodatasets._utilities import NEURODATASETS_HOME
 
 IDENTIFIER = "allen2021.natural_scenes"
@@ -15,8 +16,7 @@ def compute_shared_stimuli(
     *,
     n_repetitions: int = 1,
 ) -> set[int]:
-    """
-    Get the IDs of the stimuli shared across all the provided assemblies.
+    """Get the IDs of the stimuli shared across all the provided assemblies.
 
     Args:
     ----
@@ -50,8 +50,7 @@ def compute_noise_ceiling(
     *,
     ncsnr: xr.DataArray,
 ) -> xr.DataArray:
-    """
-    Compute the noise ceiling for a subject's fMRI data using the method described in the NSD Data Manual under the "Conversion of ncsnr to noise ceiling percentages" section.
+    """Compute the noise ceiling for a subject's fMRI data using the method described in the NSD Data Manual under the "Conversion of ncsnr to noise ceiling percentages" section.
 
     Args:
     ----
@@ -72,7 +71,7 @@ def compute_noise_ceiling(
     else:
         reps = {1: 0, 2: 0, 3: 0}
         unique, counts = np.unique(counts, return_counts=True)
-        reps = reps | dict(zip(unique, counts, strict=True))
+        reps |= dict(zip(unique, counts, strict=True))
         fraction = (reps[1] + reps[2] / 2 + reps[3] / 3) / (reps[1] + reps[2] + reps[3])
 
     ncsnr_squared = ncsnr**2

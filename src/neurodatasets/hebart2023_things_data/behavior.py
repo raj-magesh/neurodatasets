@@ -5,8 +5,8 @@ import numpy.typing as npt
 import pandas as pd
 import scipy
 import xarray as xr
-from neurodatasets._utilities import NEURODATASETS_HOME
 
+from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import osf
 
 IDENTIFIER = "hebart2023.things-data"
@@ -31,7 +31,8 @@ def load_embeddings() -> xr.DataArray:
     ).to_numpy()
 
     behavior = (
-        pd.read_csv(
+        pd
+        .read_csv(
             CACHE_PATH / "variables" / "labels.txt",
             sep="\t",
             header=None,
@@ -41,7 +42,8 @@ def load_embeddings() -> xr.DataArray:
     )
 
     object_ids = (
-        pd.read_csv(
+        pd
+        .read_csv(
             CACHE_PATH / "variables" / "unique_id.txt",
             sep="\t",
             header=None,
@@ -182,8 +184,7 @@ def standardize_order_of_triplets(
     *,
     choices: npt.NDArray[np.uint64],
 ) -> npt.NDArray[np.uint64]:
-    """
-    Standardize the order of triplets for the odd-one-out task.
+    """Standardize the order of triplets for the odd-one-out task.
 
     Given a triplet of stimulus indices `{j, k, i}`, sort it to `(i, j, k)` such
     that `k` is the chosen odd-stimulus-out and `i < j`.

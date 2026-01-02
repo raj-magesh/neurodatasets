@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import xarray as xr
+
 from neurodatasets._utilities import nii
 from neurodatasets.chang2019_bold5000._utilities import (
     IDENTIFIER,
@@ -22,7 +23,8 @@ def load_betas(subject: int) -> xr.DataArray:
     neuroid_metadata = load_neuroid_metadata(subject)
 
     return (
-        xr.concat(
+        xr
+        .concat(
             [
                 load_activations(subject, session).sel({"neuroid": mask})
                 for session in range(N_SESSIONS[subject])

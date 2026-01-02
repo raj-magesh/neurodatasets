@@ -3,12 +3,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import xarray as xr
-from neurodatasets.stringer2019_mouse._utilities import CACHE_PATH
 from PIL import Image
 from scipy.io import loadmat
 
 from neurodatasets.files import download_from_url
 from neurodatasets.files.figshare import get_url_dict
+from neurodatasets.stringer2019_mouse._utilities import CACHE_PATH
 
 FIGSHARE_ARTICLE_ID = 6845348
 

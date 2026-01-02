@@ -6,8 +6,8 @@ import mne
 import numpy as np
 import pandas as pd
 import xarray as xr
-from neurodatasets._utilities import NEURODATASETS_HOME
 
+from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import s3
 
 logging.basicConfig(level=logging.INFO)
@@ -50,8 +50,8 @@ def load_preprocessed_data(
     tmin: float = -0.1,
     tmax: float = 1.0,
     is_validation: bool = False,
-    window_size: (int | float) = None,
-    window_step: (int | float) = None,
+    window_size: (float) = None,
+    window_step: (float) = None,
     baseline: set[float, float] = None,
     scale: (str | float) = None,
 ) -> tuple[xr.DataArray, pd.DataFrame]:
@@ -144,7 +144,8 @@ def load_preprocessed_data(
         indices = np.arange(0, dim_length, window_step)
         data = [
             (
-                data.isel({"time": slice(i, i + window_size)})
+                data
+                .isel({"time": slice(i, i + window_size)})
                 .mean(dim="time")
                 .assign_coords({"time": data.time.values[i]})
             )

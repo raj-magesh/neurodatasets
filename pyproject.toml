@@ -31,6 +31,7 @@ urls = { repository = "https://codeberg.org/raj-magesh/neurodatasets" }
 dependencies = [
     "loguru",
     "osfclient",
+    "boto3",
     "numpy",
     "pandas",
     "scipy",
@@ -43,6 +44,7 @@ dependencies = [
     "mne",
     "torch",
     "xarray", # FIXME add [complete] when llvmlite can build
+    "xdg-base-dirs",
 ]
 version = "0.1.0"  # FIXME(dynamic version): https://github.com/astral-sh/uv/issues/8714
 

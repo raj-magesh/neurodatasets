@@ -3,10 +3,10 @@ from typing import Self
 
 import pandas as pd
 import scipy
-from neurodatasets._utilities import NEURODATASETS_HOME
 from PIL import Image
 from torch.utils.data import Dataset
 
+from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import download_from_url, untar
 
 IDENTIFIER = "khosla2021.stanford-dogs"
@@ -49,7 +49,8 @@ def load_metadata() -> pd.DataFrame:
         return synset, category, index
 
     metadata = (
-        pd.concat(
+        pd
+        .concat(
             [metadata, pd.DataFrame(metadata["file_list"].apply(_parse).tolist())],
             axis=1,
         )

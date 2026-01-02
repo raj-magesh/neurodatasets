@@ -1,7 +1,7 @@
 __all__ = (
+    "EXCLUDED_SUBJECTS",
     "IDENTIFIER",
     "N_SUBJECTS",
-    "EXCLUDED_SUBJECTS",
     "download_dataset",
     "load_preprocessed_data",
 )

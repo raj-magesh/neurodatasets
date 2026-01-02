@@ -1,6 +1,8 @@
 import subprocess
 from pathlib import Path
 
+from tqdm import tqdm
+
 from neurodatasets.chang2019_bold5000._utilities import (
     FIGSHARE_ARTICLE_ID_V1,
     FIGSHARE_ARTICLE_ID_V2,
@@ -12,8 +14,6 @@ from neurodatasets.chang2019_bold5000._utilities import (
     get_brain_mask_filename,
     get_imagenames_filename,
 )
-from tqdm import tqdm
-
 from neurodatasets.files import download_from_url, unzip
 from neurodatasets.files.figshare import get_url_dict
 

@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from neurodatasets.bonner2021_object2vec._utilities import FILENAMES, N_SUBJECTS, URLS
-
 from neurodatasets.files import download_from_url, unzip
 
 

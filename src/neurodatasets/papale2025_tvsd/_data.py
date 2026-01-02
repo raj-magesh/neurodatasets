@@ -7,12 +7,12 @@ import numpy as np
 import pandas as pd
 import scipy
 import xarray as xr
+
+from neurodatasets.files import download_from_url
 from neurodatasets.papale2025_tvsd._utilities import (
     CACHE_PATH,
     IDENTIFIER,
 )
-
-from neurodatasets.files import download_from_url
 
 ROIS = {
     "F": {
@@ -134,7 +134,8 @@ def load_normalized_data(
         ).sortby("stimulus")
 
     return (
-        xr.DataArray(
+        xr
+        .DataArray(
             name=identifier,
             data=data["test_MUA_reps"].transpose(1, 2, 0),
             dims=("stimulus", "repetition", "neuroid"),
@@ -171,7 +172,8 @@ def load_time_course(*, monkey: Literal["F", "N"]) -> xr.DataArray:
     rois = np.array(rois)[np.argsort(mapping)]
 
     stimuli = (
-        pd.DataFrame(
+        pd
+        .DataFrame(
             dataset["ALLMAT"][:, [1, 2, 4, 5]],
             columns=[
                 "train_idx",

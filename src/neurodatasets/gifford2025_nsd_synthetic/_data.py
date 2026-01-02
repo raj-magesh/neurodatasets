@@ -5,10 +5,10 @@ from typing import Literal
 import numpy as np
 import pandas as pd
 import xarray as xr
-from neurodatasets._utilities import nii
-from neurodatasets.allen2021_natural_scenes import load_brain_mask
 from scipy.io import loadmat
 
+from neurodatasets._utilities import nii
+from neurodatasets.allen2021_natural_scenes import load_brain_mask
 from neurodatasets.files import s3
 
 from ._stimuli import load_stimulus_information
@@ -59,7 +59,8 @@ def load_presentations() -> pd.DataFrame:
     stimulus_information = load_stimulus_information()
 
     return (
-        stimuli.to_dataframe()
+        stimuli
+        .to_dataframe()
         .join(stimulus_information, on="stimulus_index")
         .drop(columns=["stimulus_index"])
     )
@@ -101,7 +102,8 @@ def load_betas(
     stimuli = load_presentations()
 
     betas = (
-        xr.load_dataarray(CACHE_PATH / filepath)
+        xr
+        .load_dataarray(CACHE_PATH / filepath)
         .rename(
             {
                 "phony_dim_0": "presentation",

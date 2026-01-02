@@ -1,6 +1,7 @@
 import xarray as xr
-from neurodatasets._utilities import NEURODATASETS_HOME
 from scipy.sparse.linalg import eigsh
+
+from neurodatasets._utilities import NEURODATASETS_HOME
 
 IDENTIFIER = "stringer2019.mouse"
 SESSIONS = (
@@ -61,7 +62,8 @@ def preprocess_assembly(assembly: xr.Dataset, *, denoise: bool = True) -> xr.Dat
             {"presentation": stimulus_related["stimulus"].data != N_STIMULI},
         )
     return (
-        stimulus_related.transpose("presentation", "neuroid")
+        stimulus_related
+        .transpose("presentation", "neuroid")
         .sortby(["x", "y", "z"])
         .sortby(["stimulus", "repetition"])
         .assign_attrs(assembly.attrs)

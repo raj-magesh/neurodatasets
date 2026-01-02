@@ -7,9 +7,9 @@ import nibabel as nib
 import numpy as np
 import pandas as pd
 import xarray as xr
-from neurodatasets._utilities import NEURODATASETS_HOME
 from tqdm.auto import tqdm
 
+from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import download_from_url, untar, unzip
 
 IDENTIFIER = "hebart2023.things-data"
@@ -289,7 +289,8 @@ def load_betas(
                     path_stem.with_name(f"{path_stem.name}_betas.nii.gz"),
                 )
                 betas_session = (
-                    betas_session.assign_coords(
+                    betas_session
+                    .assign_coords(
                         {
                             "stimulus": (
                                 "presentation",
@@ -327,7 +328,8 @@ def load_betas(
                 betas.append(betas_session)
 
         betas = (
-            xr.concat(betas, dim="presentation")
+            xr
+            .concat(betas, dim="presentation")
             .rename("beta")
             .dropna(dim="neuroid", how="any")
             .assign_attrs(

@@ -5,7 +5,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import xarray as xr
-from neurodatasets._utilities import NEURODATASETS_HOME
 from osfclient.api import OSF
 
 from neurodatasets.files import unzip
@@ -32,11 +31,11 @@ def _download_osf_project(project_id, save_path, use_cached=True):
     storage = project.storage("osfstorage")
 
     if (not use_cached) or (not save_path.exists()):
-        os.makedirs(save_path, exist_ok=True)
+        Path(save_path).mkdir(exist_ok=True, parents=True)
         for file in storage.files:
             file_path = os.path.join(save_path, file.path.lstrip("/"))
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            with open(file_path, "wb") as local_file:
+            Path(os.path.dirname(file_path)).mkdir(exist_ok=True, parents=True)
+            with Path(file_path).open("wb") as local_file:
                 file.write_to(local_file)
 
             if file_path.endswith(".zip"):
@@ -83,8 +82,8 @@ def load_preprocessed_data(
     h_freq: float = None,
     tmin: float = -0.2,
     tmax: float = 0.8,
-    window_size: (int | float) = None,
-    window_step: (int | float) = None,
+    window_size: (float) = None,
+    window_step: (float) = None,
     baseline: set[float, float] = None,
     scale: (str | float) = None,
 ) -> tuple[xr.DataArray, pd.DataFrame]:

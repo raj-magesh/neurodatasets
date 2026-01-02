@@ -1,10 +1,10 @@
 from typing import Self
 
 import pandas as pd
-from neurodatasets._utilities import NEURODATASETS_HOME
 from PIL import Image
 from torch.utils.data import Dataset
 
+from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import download_from_url, unzip
 
 IDENTIFIER = "hebart2019.things"
