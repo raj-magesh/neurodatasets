@@ -6,7 +6,8 @@ import pandas as pd
 from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import download_from_url, untar
 
-IDENTIFIER = "hebart2023.things-data"
+from ._utilities import IDENTIFIER
+
 URL = "https://plus.figshare.com/ndownloader/files/36827316"
 
 BIDS_HOME = NEURODATASETS_HOME / IDENTIFIER / "THINGS-MEG"
@@ -53,7 +54,7 @@ def extract_onsets(
     ctf: mne.io.Raw,
     *,
     optical_sensor_threshold: float = 1,
-    max_delta: int = 10,
+    max_delta: int = 20,
 ) -> npt.NDArray[np.integer]:
     triggers = ctf.copy().pick(TRIGGER_CHANNEL).get_data()[0]
     optical_sensor = ctf.copy().pick(OPTICAL_SENSOR_CHANNEL).get_data()[0]

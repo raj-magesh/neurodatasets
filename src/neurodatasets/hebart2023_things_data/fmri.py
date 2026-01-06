@@ -12,10 +12,11 @@ from tqdm.auto import tqdm
 from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import download_from_url, untar, unzip
 
+from ._utilities import IDENTIFIER
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-IDENTIFIER = "hebart2023.things-data"
 CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER / "THINGS-fMRI"
 URLS = {
     "meg.tar.gz": "https://plus.figshare.com/ndownloader/files/37650461",
