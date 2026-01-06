@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 IDENTIFIER = "hebart2023.things-data"
-CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER / "fmri"
+CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER / "THINGS-fMRI"
 URLS = {
     "meg.tar.gz": "https://plus.figshare.com/ndownloader/files/37650461",
     "fmri_betas.tar.gz": "https://plus.figshare.com/ndownloader/files/36806148",
@@ -60,7 +60,7 @@ def load_nii(filepath: Path) -> xr.DataArray:
     dims = ["x", "y", "z"]
     if nii.ndim == 4:
         dims.append("presentation")
-    return xr.DataArray(
+    return xr.DataArray(  # noqa: PD013
         data=nii,
         dims=dims,
         coords={
@@ -70,23 +70,20 @@ def load_nii(filepath: Path) -> xr.DataArray:
     ).stack({"neuroid": ("x", "y", "z")}, create_index=False)
 
 
-def load_functional_rois(subject: int) -> xr.DataArray:
-    def _download() -> Path:
-        filename = "rois.zip"
-        filepath = download_from_url(
-            URLS[filename],
-            filepath=CACHE_PATH / "downloads" / filename,
-            force=False,
-        )
-        return unzip(filepath, remove_zip=False, extract_dir=CACHE_PATH / "rois")
+def _download_rois() -> Path:
+    filename = "rois.zip"
+    filepath = CACHE_PATH / "downloads" / filename
+    download_from_url(URLS[filename], filepath=filepath)
+    return unzip(filepath, remove_zip=False, extract_dir=CACHE_PATH / "rois")
 
+
+def load_functional_rois(subject: int) -> xr.DataArray:
     def _package() -> xr.DataArray:
         masks = []
         for localizer_type, rois in FUNCTIONAL_ROIS.items():
             for roi, hemisphere in itertools.product(rois, ("l", "r")):
                 path = (
                     CACHE_PATH
-                    / "rois"
                     / "rois"
                     / "category_localizer"
                     / f"sub-{subject + 1:02}"
@@ -110,21 +107,12 @@ def load_functional_rois(subject: int) -> xr.DataArray:
 
     try:
         return _package()
-    except:
-        _download()
+    except FileNotFoundError:
+        _download_rois()
         return _package()
 
 
 def load_receptive_fields(subject: int) -> xr.DataArray:
-    def _download() -> Path:
-        filename = "rois.zip"
-        filepath = download_from_url(
-            URLS[filename],
-            filepath=CACHE_PATH / "downloads" / filename,
-            force=False,
-        )
-        return unzip(filepath, remove_zip=False, extract_dir=CACHE_PATH / "rois")
-
     def _package() -> xr.DataArray:
         quantities = {
             "angle": "angle",
@@ -137,7 +125,6 @@ def load_receptive_fields(subject: int) -> xr.DataArray:
             path = (
                 CACHE_PATH
                 / "rois"
-                / "rois"
                 / "prf"
                 / f"sub-{subject + 1:02}"
                 / f"resampled_{label}.nii.gz"
@@ -148,7 +135,7 @@ def load_receptive_fields(subject: int) -> xr.DataArray:
     try:
         return _package()
     except:
-        _download()
+        _download_rois()
         return _package()
 
 
@@ -206,14 +193,13 @@ def load_brain_mask(subject: int) -> xr.DataArray:
         path = (
             CACHE_PATH
             / "brain_masks"
-            / "brainmasks"
             / f"sub-{subject + 1:02}_space-T1w_brainmask.nii.gz"
         )
         return load_nii(path).astype(bool)
 
     try:
         return _package()
-    except:
+    except FileNotFoundError:
         _download()
         return _package()
 
@@ -374,6 +360,6 @@ def load_betas(
 
     try:
         return _package()
-    except:
+    except FileNotFoundError:
         _download()
         return _package()

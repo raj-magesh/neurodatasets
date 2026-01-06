@@ -9,7 +9,8 @@ import xarray as xr
 from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import osf
 
-IDENTIFIER = "hebart2023.things-data"
+from ._utilities import IDENTIFIER
+
 CACHE_PATH = NEURODATASETS_HOME / IDENTIFIER / "behavior"
 
 

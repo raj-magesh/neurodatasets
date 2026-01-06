@@ -88,7 +88,7 @@ def _extract_stimulus_ids(paths: list[str]) -> list[str]:
     return [x.split("\\")[-1][:-4] for x in paths]
 
 
-def load_electrode_metadata(*, monkey: Literal["F", "N"]) -> xr.DataArray:
+def load_electrode_metadata(*, monkey: Literal["F", "N"]) -> xr.Dataset:
     data = mat73.loadmat(download(monkey=monkey, normalized=True))
     return xr.Dataset(
         {
@@ -136,7 +136,7 @@ def load_normalized_data(
         ).sortby("stimulus")
 
     return (
-        xr
+        xr  # noqa: PD013
         .DataArray(
             name=identifier,
             data=data["test_MUA_reps"].transpose(1, 2, 0),

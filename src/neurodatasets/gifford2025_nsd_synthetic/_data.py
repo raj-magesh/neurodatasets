@@ -92,7 +92,7 @@ def load_betas(
     )
 
     brain_mask = load_brain_mask(subject=subject, resolution=resolution)
-    validity = load_validity(subject=subject, resolution=resolution).stack(
+    validity = load_validity(subject=subject, resolution=resolution).stack(  # noqa: PD013
         {"neuroid": ("x", "y", "z")},
         create_index=True,
     )
@@ -100,12 +100,12 @@ def load_betas(
     neuroid_filter = np.logical_and(neuroid_filter, validity)
     neuroid_filter = np.logical_and(
         neuroid_filter,
-        brain_mask.stack({"neuroid": ("x", "y", "z")}, create_index=True),
+        brain_mask.stack({"neuroid": ("x", "y", "z")}, create_index=True),  # noqa: PD013
     )
     stimuli = load_presentations()
 
     betas = (
-        xr
+        xr  # noqa: PD013
         .load_dataarray(CACHE_PATH / filepath)
         .rename(
             {

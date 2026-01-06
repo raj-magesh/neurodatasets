@@ -3,8 +3,6 @@ from pathlib import Path
 import boto3
 from loguru import logger
 
-# TODO: refactor to include neurodatasets.files._utilities.prepare_filepath
-
 
 def download(
     s3_path: Path,

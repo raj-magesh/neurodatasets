@@ -6,7 +6,7 @@ build-backend = "uv_build"
 name = "neurodatasets"
 description = "Utilities to download and interact with a curated collection of public neural datasets"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 license = { file = "LICENSE" }
 authors = [{ name = "Raj Magesh Gauthaman", email = "neurodatasets@raj-magesh.org" }]
 keywords = [

@@ -44,7 +44,7 @@ def download_dataset(*, force: bool = False) -> None:
     # ROI masks
     subprocess.run(
         [
-            "aws",
+            "/usr/bin/aws",
             "s3",
             "sync",
             "--no-sign-request",

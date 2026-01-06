@@ -128,10 +128,7 @@ class StimulusSet(Dataset):
         self.stimuli_shared = load_shared_stimuli()
         self.stimuli_unshared = load_unshared_stimuli(subject=subject)
 
-    def __getitem__(
-        self: Self,
-        stimulus: int | str,
-    ) -> Image.Image:
+    def __getitem__(self: Self, stimulus: int | str) -> Image.Image:
         if isinstance(stimulus, int):
             if stimulus < N_STIMULI_SHARED:
                 image = self.stimuli_shared.isel(stimulus=stimulus)

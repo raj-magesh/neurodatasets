@@ -13,6 +13,7 @@ def untar(
 ) -> Path:
     if extract_dir is None:
         extract_dir = Path("/tmp")
+
     extract_dir.mkdir(parents=True, exist_ok=True)
 
     with tarfile.open(filepath) as tar:

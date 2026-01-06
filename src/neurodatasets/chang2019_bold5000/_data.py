@@ -95,6 +95,6 @@ def load_structural_scan(subject: int) -> xr.DataArray:
 
 
 def load_image_filename_stems(subject: int) -> list[str]:
-    with get_imagenames_filename(subject).open("rb") as f:
+    with get_imagenames_filename(subject).open("r") as f:
         # strip newlines, extension
         return [Path(line[:-1]).stem for line in f.readlines()]
