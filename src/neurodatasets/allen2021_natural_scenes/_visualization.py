@@ -1,417 +1,417 @@
-"""Adapted from https://github.com/cvnlab/nsdcode."""
+# """Adapted from https://github.com/cvnlab/nsdcode."""
 
-from pathlib import Path
-from typing import TYPE_CHECKING, Literal
+# from pathlib import Path
+# from typing import TYPE_CHECKING, Literal
 
-import fast_simplification
-import nibabel as nib
-import numpy as np
-import xarray as xr
-from nilearn.datasets import fetch_surf_fsaverage
-from nilearn.plotting import plot_surf_roi, plot_surf_stat_map
-from nilearn.surface import load_surf_data, load_surf_mesh, vol_to_surf
-from scipy.ndimage import map_coordinates
+# import fast_simplification
+# import nibabel as nib
+# import numpy as np
+# import xarray as xr
+# from nilearn.datasets import fetch_surf_fsaverage
+# from nilearn.plotting import plot_surf_roi, plot_surf_stat_map
+# from nilearn.surface import load_surf_data, load_surf_mesh, vol_to_surf
+# from scipy.ndimage import map_coordinates
 
-from neurodatasets.allen2021_natural_scenes import load_brain_mask
-from neurodatasets.allen2021_natural_scenes._utilities import BUCKET_NAME, CACHE_PATH
-from neurodatasets.files import s3
+# from neurodatasets.allen2021_natural_scenes import load_brain_mask
+# from neurodatasets.allen2021_natural_scenes._utilities import BUCKET_NAME, CACHE_PATH
+# from neurodatasets.files import s3
 
-if TYPE_CHECKING:
-    from matplotlib.axes import Axes
+# if TYPE_CHECKING:
+#     from matplotlib.axes import Axes
 
-MNI_SHAPE = (182, 218, 182)
-MNI_ORIGIN = np.asarray([183 - 91, 127, 73]) - 1
-MNI_RESOLUTION = 1
+# MNI_SHAPE = (182, 218, 182)
+# MNI_ORIGIN = np.asarray([183 - 91, 127, 73]) - 1
+# MNI_RESOLUTION = 1
 
-SURFACE_ROI_MAPPINGS = {
-    "streams": {
-        "early visual stream": 1,
-        "midventral visual stream": 2,
-        "midlateral visual stream": 3,
-        "midparietal visual stream": 4,
-        "ventral visual stream": 5,
-        "lateral visual stream": 6,
-        "parietal visual stream": 7,
-    },
-    "prf-visualrois": {
-        "V1v": 1,
-        "V1d": 2,
-        "V2v": 3,
-        "V2d": 4,
-        "V3v": 5,
-        "V3d": 6,
-        "hV4": 7,
-    },
-}
-
-
-def normalize_hemisphere(
-    hemisphere: Literal["left", "right", "lh", "rh", "l", "r"],
-) -> Literal["lh", "rh"]:
-    match hemisphere.lower():
-        case "left" | "l" | "lh":
-            return "lh"
-        case "right" | "r" | "rh":
-            return "rh"
-        case _:
-            raise ValueError
+# SURFACE_ROI_MAPPINGS = {
+#     "streams": {
+#         "early visual stream": 1,
+#         "midventral visual stream": 2,
+#         "midlateral visual stream": 3,
+#         "midparietal visual stream": 4,
+#         "ventral visual stream": 5,
+#         "lateral visual stream": 6,
+#         "parietal visual stream": 7,
+#     },
+#     "prf-visualrois": {
+#         "V1v": 1,
+#         "V1d": 2,
+#         "V2v": 3,
+#         "V2d": 4,
+#         "V3v": 5,
+#         "V3d": 6,
+#         "hV4": 7,
+#     },
+# }
 
 
-def load_transformation(
-    *,
-    subject: int,
-    source_space: Literal["func1pt8", "lh.func1pt8", "rh.func1pt8"],
-    target_space: Literal["MNI", "layerB1", "layerB2", "layerB3"],
-    suffix: Literal[".nii.gz", ".mgz"],
-) -> np.ndarray:
-    filepath = (
-        Path("nsddata")
-        / "ppdata"
-        / f"subj{subject + 1:02}"
-        / "transforms"
-        / f"{source_space}-to-{target_space}{suffix}"
-    )
-
-    s3.download(filepath, bucket=BUCKET_NAME, local_path=CACHE_PATH / filepath)
-    return nib.loadsave.load(CACHE_PATH / filepath).get_fdata()
+# def normalize_hemisphere(
+#     hemisphere: Literal["left", "right", "lh", "rh", "l", "r"],
+# ) -> Literal["lh", "rh"]:
+#     match hemisphere.lower():
+#         case "left" | "l" | "lh":
+#             return "lh"
+#         case "right" | "r" | "rh":
+#             return "rh"
+#         case _:
+#             raise ValueError
 
 
-def load_surface_roi(
-    *,
-    subject: int,
-    hemisphere: Literal["left", "right"],
-    label: Literal["nsdgeneral", "prf-visualrois", "streams"],
-) -> Path:
-    """Load and format a surface ROI."""
-    filepath = (
-        Path("nsddata")
-        / "freesurfer"
-        / f"subj{subject + 1:02}"
-        / "label"
-        / f"{normalize_hemisphere(hemisphere)}.{label}.mgz"
-    )
-    s3.download(filepath, bucket=BUCKET_NAME, local_path=CACHE_PATH / filepath)
-    return CACHE_PATH / filepath
+# def load_transformation(
+#     *,
+#     subject: int,
+#     source_space: Literal["func1pt8", "lh.func1pt8", "rh.func1pt8"],
+#     target_space: Literal["MNI", "layerB1", "layerB2", "layerB3"],
+#     suffix: Literal[".nii.gz", ".mgz"],
+# ) -> np.ndarray:
+#     filepath = (
+#         Path("nsddata")
+#         / "ppdata"
+#         / f"subj{subject + 1:02}"
+#         / "transforms"
+#         / f"{source_space}-to-{target_space}{suffix}"
+#     )
+
+#     s3.download(filepath, bucket=BUCKET_NAME, local_path=CACHE_PATH / filepath)
+#     return nib.loadsave.load(CACHE_PATH / filepath).get_fdata()
 
 
-def load_surface_mesh(
-    *,
-    subject: int,
-    hemisphere: Literal["left", "right"],
-    label: Literal["inflated", "pial", "curv", "w-g.pct.mgh"],
-) -> Path:
-    """Load and format a surface mesh."""
-    filepath = (
-        Path("nsddata")
-        / "freesurfer"
-        / f"subj{subject + 1:02}"
-        / "surf"
-        / f"{normalize_hemisphere(hemisphere)}.{label}"
-    )
-    s3.download(filepath, bucket=BUCKET_NAME, local_path=CACHE_PATH / filepath)
-    return CACHE_PATH / filepath
+# def load_surface_roi(
+#     *,
+#     subject: int,
+#     hemisphere: Literal["left", "right"],
+#     label: Literal["nsdgeneral", "prf-visualrois", "streams"],
+# ) -> Path:
+#     """Load and format a surface ROI."""
+#     filepath = (
+#         Path("nsddata")
+#         / "freesurfer"
+#         / f"subj{subject + 1:02}"
+#         / "label"
+#         / f"{normalize_hemisphere(hemisphere)}.{label}.mgz"
+#     )
+#     s3.download(filepath, bucket=BUCKET_NAME, local_path=CACHE_PATH / filepath)
+#     return CACHE_PATH / filepath
 
 
-def convert_ndarray_to_nifti1image(
-    data: np.ndarray,
-    *,
-    resolution: float = MNI_RESOLUTION,
-    origin: np.ndarray = MNI_ORIGIN,
-) -> nib.nifti1.Nifti1Image:
-    header = nib.nifti1.Nifti1Header()
-    header.set_data_dtype(data.dtype)
-
-    affine = np.diag([resolution] * 3 + [1])
-    if origin is None:
-        origin = ((np.asarray([1, 1, 1]) + np.asarray(data.shape)) / 2) - 1
-    affine[0, -1] = -origin[0] * resolution
-    affine[1, -1] = -origin[1] * resolution
-    affine[2, -1] = -origin[2] * resolution
-
-    return nib.nifti1.Nifti1Image(data, affine, header)
-
-
-def postprocess_surface_transform(
-    coordinates: np.ndarray,
-) -> tuple[np.ndarray, xr.DataArray]:
-    coordinates = np.squeeze(coordinates).transpose()  # flatten 3D to 1D
-    coordinates -= 1  # compensate for 1-indexing
-    good_voxels = xr.DataArray(
-        data=np.all(np.isfinite(coordinates), axis=0),
-        dims=("neuroid",),
-    )
-    return coordinates, good_voxels
+# def load_surface_mesh(
+#     *,
+#     subject: int,
+#     hemisphere: Literal["left", "right"],
+#     label: Literal["inflated", "pial", "curv", "w-g.pct.mgh"],
+# ) -> Path:
+#     """Load and format a surface mesh."""
+#     filepath = (
+#         Path("nsddata")
+#         / "freesurfer"
+#         / f"subj{subject + 1:02}"
+#         / "surf"
+#         / f"{normalize_hemisphere(hemisphere)}.{label}"
+#     )
+#     s3.download(filepath, bucket=BUCKET_NAME, local_path=CACHE_PATH / filepath)
+#     return CACHE_PATH / filepath
 
 
-def postprocess_mni_transform(
-    coordinates: np.ndarray,
-    *,
-    volume: np.ndarray,
-) -> tuple[np.ndarray, xr.DataArray]:
-    coordinates = np.flip(coordinates, axis=0)  # RPI to LPI ordering
-    coordinates -= 1  # compensate for 1-indexing
+# def convert_ndarray_to_nifti1image(
+#     data: np.ndarray,
+#     *,
+#     resolution: float = MNI_RESOLUTION,
+#     origin: np.ndarray = MNI_ORIGIN,
+# ) -> nib.nifti1.Nifti1Image:
+#     header = nib.nifti1.Nifti1Header()
+#     header.set_data_dtype(data.dtype)
 
-    good_voxels = np.all(
-        np.stack(
-            [
-                (coordinates[..., dim] >= 0)
-                & (coordinates[..., dim] < volume.shape[dim])
-                for dim in (-3, -2, -1)
-            ]
-            + [
-                np.all(np.isfinite(coordinates), axis=-1),
-            ],
-            axis=-1,
-        ),
-        axis=-1,
-    )
-    good_voxels = xr.DataArray(
-        data=good_voxels,
-        dims=("x", "y", "z"),
-    ).stack({"neuroid": ("x", "y", "z")})
+#     affine = np.diag([resolution] * 3 + [1])
+#     if origin is None:
+#         origin = ((np.asarray([1, 1, 1]) + np.asarray(data.shape)) / 2) - 1
+#     affine[0, -1] = -origin[0] * resolution
+#     affine[1, -1] = -origin[1] * resolution
+#     affine[2, -1] = -origin[2] * resolution
 
-    coordinates = coordinates.reshape(-1, 3).transpose()  # flatten 3D to 1D
-
-    return coordinates, good_voxels
+#     return nib.nifti1.Nifti1Image(data, affine, header)
 
 
-def transform_data_to_mni(
-    data: xr.DataArray,
-    *,
-    subject: int,
-    source_space: Literal["func1pt8"] = "func1pt8",
-    order: int = 0,
-) -> xr.DataArray:
-    brain_shape = load_brain_mask(subject=subject, resolution="1pt8mm").shape
-    volume = reshape_dataarray_to_brain(data.copy(), brain_shape=brain_shape)
-
-    coordinates = load_transformation(
-        subject=subject,
-        source_space=source_space,
-        target_space="MNI",
-        suffix=".nii.gz",
-    )
-    shape = coordinates.shape[:-1]
-    coordinates, good_voxels = postprocess_mni_transform(
-        coordinates,
-        volume=volume,
-    )
-    return xr.DataArray(
-        data=map_coordinates(
-            np.nan_to_num(volume.astype(np.float64), nan=0),
-            coordinates[..., good_voxels],
-            order=order,
-            mode="nearest",
-            output=np.float32,
-        ),
-        dims=("neuroid",),
-        coords=good_voxels[good_voxels].coords,
-        attrs={"shape": shape},
-    )
+# def postprocess_surface_transform(
+#     coordinates: np.ndarray,
+# ) -> tuple[np.ndarray, xr.DataArray]:
+#     coordinates = np.squeeze(coordinates).transpose()  # flatten 3D to 1D
+#     coordinates -= 1  # compensate for 1-indexing
+#     good_voxels = xr.DataArray(
+#         data=np.all(np.isfinite(coordinates), axis=0),
+#         dims=("neuroid",),
+#     )
+#     return coordinates, good_voxels
 
 
-def transform_data_to_surface(
-    data: xr.DataArray,
-    *,
-    subject: int,
-    source_space: Literal["func1pt8"] = "func1pt8",
-    order: int,
-) -> dict[str, dict[str, np.ndarray]]:
-    brain_shape = load_brain_mask(subject=subject, resolution="1pt8mm").shape
-    volume = reshape_dataarray_to_brain(data.copy(), brain_shape=brain_shape)
+# def postprocess_mni_transform(
+#     coordinates: np.ndarray,
+#     *,
+#     volume: np.ndarray,
+# ) -> tuple[np.ndarray, xr.DataArray]:
+#     coordinates = np.flip(coordinates, axis=0)  # RPI to LPI ordering
+#     coordinates -= 1  # compensate for 1-indexing
 
-    surface: dict[str, dict[str, np.ndarray]] = {}
-    for hemisphere in ("left", "right"):
-        surface[hemisphere] = {}
-        for layer in ("layerB1", "layerB2", "layerB3"):
-            coordinates = load_transformation(
-                subject=subject,
-                source_space=f"{normalize_hemisphere(hemisphere)}.{source_space}",
-                target_space=layer,
-                suffix=".mgz",
-            )
-            coordinates, good_voxels = postprocess_surface_transform(coordinates)
+#     good_voxels = np.all(
+#         np.stack(
+#             [
+#                 (coordinates[..., dim] >= 0)
+#                 & (coordinates[..., dim] < volume.shape[dim])
+#                 for dim in (-3, -2, -1)
+#             ]
+#             + [
+#                 np.all(np.isfinite(coordinates), axis=-1),
+#             ],
+#             axis=-1,
+#         ),
+#         axis=-1,
+#     )
+#     good_voxels = xr.DataArray(
+#         data=good_voxels,
+#         dims=("x", "y", "z"),
+#     ).stack({"neuroid": ("x", "y", "z")})
 
-            surface[hemisphere][layer] = map_coordinates(
-                np.nan_to_num(volume.astype(np.float64), nan=0),
-                coordinates,
-                order=order,
-                mode="nearest",
-                output=np.float32,
-            )
-            surface[hemisphere][layer][~good_voxels] = np.nan
+#     coordinates = coordinates.reshape(-1, 3).transpose()  # flatten 3D to 1D
 
-        surface[hemisphere]["average"] = np.vstack(
-            list(surface[hemisphere].values()),
-        ).mean(axis=0)
-    return surface
+#     return coordinates, good_voxels
 
 
-def plot_brain_map(
-    data: xr.DataArray,
-    *,
-    ax: Axes,
-    subject: int,
-    space: Literal["surface", "MNI"] = "surface",
-    hemisphere: Literal["left", "right"] = "left",
-    surface_type: Literal["pial", "inflated"] = "inflated",
-    view: str | tuple[float, float] = "lateral",
-    cmap: str = "cold_hot",
-    interpolation: Literal["nearest", "linear", "cubic"] = "nearest",
-    layer: Literal["layerB1", "layerB2", "layerB3", "average"] = "average",
-    fsaverage_mesh: Literal["fsaverage"] = "fsaverage",
-    threshold: float | None = None,
-    low: float = 0.25,
-    high: float = 0.5,
-    decimate: float = 1,
-    adjust_limits: bool = False,
-    **kwargs,
-) -> None:
-    match interpolation:
-        case "nearest":
-            order = 0
-        case "linear":
-            order = 1
-        case "cubic":
-            order = 3
-        case _:
-            raise ValueError
+# def transform_data_to_mni(
+#     data: xr.DataArray,
+#     *,
+#     subject: int,
+#     source_space: Literal["func1pt8"] = "func1pt8",
+#     order: int = 0,
+# ) -> xr.DataArray:
+#     brain_shape = load_brain_mask(subject=subject, resolution="1pt8mm").shape
+#     volume = reshape_dataarray_to_brain(data.copy(), brain_shape=brain_shape)
 
-    match space:
-        case "surface":
-            stat_map = transform_data_to_surface(
-                data.copy(),
-                subject=subject,
-                order=order,
-            )[hemisphere][layer]
-
-            curv_map = load_surf_data(
-                load_surface_mesh(
-                    subject=subject,
-                    hemisphere=hemisphere,
-                    label="curv",
-                ),
-            )
-            surf_mesh = load_surf_mesh(
-                load_surface_mesh(
-                    subject=subject,
-                    hemisphere=hemisphere,
-                    label=surface_type,
-                ),
-            )
-        case "MNI":
-            mni = transform_data_to_mni(
-                data.copy(),
-                subject=subject,
-                order=order,
-            )
-            mni = reshape_dataarray_to_brain(mni, brain_shape=MNI_SHAPE)
-            fsaverage = fetch_surf_fsaverage(mesh=fsaverage_mesh)
-
-            match surface_type:
-                case "inflated":
-                    prefix = "infl"
-                case "pial":
-                    prefix = "pial"
-                case _:
-                    raise ValueError
-
-            surf_mesh = load_surf_mesh(fsaverage[f"{prefix}_{hemisphere}"])
-            stat_map = vol_to_surf(
-                convert_ndarray_to_nifti1image(mni),
-                fsaverage[f"pial_{hemisphere}"],
-            )
-            curv_map = load_surf_data(fsaverage[f"curv_{hemisphere}"])
-        case _:
-            raise ValueError
-
-    coordinates, faces = surf_mesh.coordinates, surf_mesh.faces
-
-    if decimate < 1:
-        _, _, collapses = fast_simplification.simplify(
-            coordinates,
-            faces,
-            target_reduction=1 - decimate,
-            return_collapses=True,
-        )
-        # float32 cast required to avoid `ValueError: Buffer dtype mismatch, expected 'float' but got 'double'` in `File "fast_simplification/_replay.pyx", line 33, in fast_simplification._replay.load_int32`
-        coordinates, faces, mapping = fast_simplification.replay_simplification(
-            coordinates.astype(np.float32),
-            faces,
-            collapses,
-        )
-        mapping = np.isin(
-            np.arange(len(surf_mesh.coordinates)),
-            mapping,
-        )
-        stat_map = stat_map[mapping]
-        curv_map = curv_map[mapping]
-
-    _ = plot_surf_stat_map(
-        axes=ax,
-        stat_map=stat_map,
-        surf_mesh=[coordinates, faces],
-        hemi=hemisphere,
-        threshold=threshold,
-        colorbar=False,
-        bg_map=normalize_curv_map(
-            curv_map,
-            low=low,
-            high=high,
-        ),
-        engine="matplotlib",
-        view=view,
-        cmap=cmap,
-        **kwargs,
-    )
-    if adjust_limits:
-        ax.set_xlim(coordinates[:, 0].min(), coordinates[:, 0].max())
-        ax.set_ylim(coordinates[:, 1].min(), coordinates[:, 1].max())
+#     coordinates = load_transformation(
+#         subject=subject,
+#         source_space=source_space,
+#         target_space="MNI",
+#         suffix=".nii.gz",
+#     )
+#     shape = coordinates.shape[:-1]
+#     coordinates, good_voxels = postprocess_mni_transform(
+#         coordinates,
+#         volume=volume,
+#     )
+#     return xr.DataArray(
+#         data=map_coordinates(
+#             np.nan_to_num(volume.astype(np.float64), nan=0),
+#             coordinates[..., good_voxels],
+#             order=order,
+#             mode="nearest",
+#             output=np.float32,
+#         ),
+#         dims=("neuroid",),
+#         coords=good_voxels[good_voxels].coords,
+#         attrs={"shape": shape},
+#     )
 
 
-def plot_rois(
-    roi_map: np.ndarray,
-    *,
-    subject: int,
-    ax: Axes,
-    hemisphere: Literal["left", "right"] = "left",
-    surface_type: Literal["inflated", "pial"] = "inflated",
-    view: Literal["lateral", "medial", "ventral"] | tuple[int, int] = "lateral",
-    cmap: str = "rocket",
-    **kwargs,
-) -> None:
-    _ = plot_surf_roi(
-        axes=ax,
-        roi_map=roi_map,
-        surf_mesh=load_surface_mesh(
-            subject=subject,
-            hemisphere=hemisphere,
-            label=surface_type,
-        ),
-        hemi=hemisphere,
-        threshold=np.finfo(np.float32).resolution,
-        colorbar=False,
-        bg_map=normalize_curv_map(
-            load_surf_data(
-                load_surface_mesh(subject=subject, hemisphere=hemisphere, label="curv"),
-            ),
-            **kwargs,
-        ),
-        engine="matplotlib",
-        view=view,
-        cmap=cmap,
-        avg_method="median",
-    )
+# def transform_data_to_surface(
+#     data: xr.DataArray,
+#     *,
+#     subject: int,
+#     source_space: Literal["func1pt8"] = "func1pt8",
+#     order: int,
+# ) -> dict[str, dict[str, np.ndarray]]:
+#     brain_shape = load_brain_mask(subject=subject, resolution="1pt8mm").shape
+#     volume = reshape_dataarray_to_brain(data.copy(), brain_shape=brain_shape)
+
+#     surface: dict[str, dict[str, np.ndarray]] = {}
+#     for hemisphere in ("left", "right"):
+#         surface[hemisphere] = {}
+#         for layer in ("layerB1", "layerB2", "layerB3"):
+#             coordinates = load_transformation(
+#                 subject=subject,
+#                 source_space=f"{normalize_hemisphere(hemisphere)}.{source_space}",
+#                 target_space=layer,
+#                 suffix=".mgz",
+#             )
+#             coordinates, good_voxels = postprocess_surface_transform(coordinates)
+
+#             surface[hemisphere][layer] = map_coordinates(
+#                 np.nan_to_num(volume.astype(np.float64), nan=0),
+#                 coordinates,
+#                 order=order,
+#                 mode="nearest",
+#                 output=np.float32,
+#             )
+#             surface[hemisphere][layer][~good_voxels] = np.nan
+
+#         surface[hemisphere]["average"] = np.vstack(
+#             list(surface[hemisphere].values()),
+#         ).mean(axis=0)
+#     return surface
 
 
-def reshape_dataarray_to_brain(
-    data: xr.DataArray,
-    *,
-    brain_shape: tuple[int, ...],
-) -> np.ndarray:
-    output_shape = (
-        (data.sizes["presentation"], *brain_shape) if data.ndim == 2 else brain_shape
-    )
-    output = np.full(output_shape, fill_value=np.nan, dtype=data.data.dtype)
-    output[..., data["x"].data, data["y"].data, data["z"].data] = data.data
-    return output
+# def plot_brain_map(
+#     data: xr.DataArray,
+#     *,
+#     ax: Axes,
+#     subject: int,
+#     space: Literal["surface", "MNI"] = "surface",
+#     hemisphere: Literal["left", "right"] = "left",
+#     surface_type: Literal["pial", "inflated"] = "inflated",
+#     view: str | tuple[float, float] = "lateral",
+#     cmap: str = "cold_hot",
+#     interpolation: Literal["nearest", "linear", "cubic"] = "nearest",
+#     layer: Literal["layerB1", "layerB2", "layerB3", "average"] = "average",
+#     fsaverage_mesh: Literal["fsaverage"] = "fsaverage",
+#     threshold: float | None = None,
+#     low: float = 0.25,
+#     high: float = 0.5,
+#     decimate: float = 1,
+#     adjust_limits: bool = False,
+#     **kwargs,
+# ) -> None:
+#     match interpolation:
+#         case "nearest":
+#             order = 0
+#         case "linear":
+#             order = 1
+#         case "cubic":
+#             order = 3
+#         case _:
+#             raise ValueError
+
+#     match space:
+#         case "surface":
+#             stat_map = transform_data_to_surface(
+#                 data.copy(),
+#                 subject=subject,
+#                 order=order,
+#             )[hemisphere][layer]
+
+#             curv_map = load_surf_data(
+#                 load_surface_mesh(
+#                     subject=subject,
+#                     hemisphere=hemisphere,
+#                     label="curv",
+#                 ),
+#             )
+#             surf_mesh = load_surf_mesh(
+#                 load_surface_mesh(
+#                     subject=subject,
+#                     hemisphere=hemisphere,
+#                     label=surface_type,
+#                 ),
+#             )
+#         case "MNI":
+#             mni = transform_data_to_mni(
+#                 data.copy(),
+#                 subject=subject,
+#                 order=order,
+#             )
+#             mni = reshape_dataarray_to_brain(mni, brain_shape=MNI_SHAPE)
+#             fsaverage = fetch_surf_fsaverage(mesh=fsaverage_mesh)
+
+#             match surface_type:
+#                 case "inflated":
+#                     prefix = "infl"
+#                 case "pial":
+#                     prefix = "pial"
+#                 case _:
+#                     raise ValueError
+
+#             surf_mesh = load_surf_mesh(fsaverage[f"{prefix}_{hemisphere}"])
+#             stat_map = vol_to_surf(
+#                 convert_ndarray_to_nifti1image(mni),
+#                 fsaverage[f"pial_{hemisphere}"],
+#             )
+#             curv_map = load_surf_data(fsaverage[f"curv_{hemisphere}"])
+#         case _:
+#             raise ValueError
+
+#     coordinates, faces = surf_mesh.coordinates, surf_mesh.faces
+
+#     if decimate < 1:
+#         _, _, collapses = fast_simplification.simplify(
+#             coordinates,
+#             faces,
+#             target_reduction=1 - decimate,
+#             return_collapses=True,
+#         )
+#         # float32 cast required to avoid `ValueError: Buffer dtype mismatch, expected 'float' but got 'double'` in `File "fast_simplification/_replay.pyx", line 33, in fast_simplification._replay.load_int32`
+#         coordinates, faces, mapping = fast_simplification.replay_simplification(
+#             coordinates.astype(np.float32),
+#             faces,
+#             collapses,
+#         )
+#         mapping = np.isin(
+#             np.arange(len(surf_mesh.coordinates)),
+#             mapping,
+#         )
+#         stat_map = stat_map[mapping]
+#         curv_map = curv_map[mapping]
+
+#     _ = plot_surf_stat_map(
+#         axes=ax,
+#         stat_map=stat_map,
+#         surf_mesh=[coordinates, faces],
+#         hemi=hemisphere,
+#         threshold=threshold,
+#         colorbar=False,
+#         bg_map=normalize_curv_map(
+#             curv_map,
+#             low=low,
+#             high=high,
+#         ),
+#         engine="matplotlib",
+#         view=view,
+#         cmap=cmap,
+#         **kwargs,
+#     )
+#     if adjust_limits:
+#         ax.set_xlim(coordinates[:, 0].min(), coordinates[:, 0].max())
+#         ax.set_ylim(coordinates[:, 1].min(), coordinates[:, 1].max())
+
+
+# def plot_rois(
+#     roi_map: np.ndarray,
+#     *,
+#     subject: int,
+#     ax: Axes,
+#     hemisphere: Literal["left", "right"] = "left",
+#     surface_type: Literal["inflated", "pial"] = "inflated",
+#     view: Literal["lateral", "medial", "ventral"] | tuple[int, int] = "lateral",
+#     cmap: str = "rocket",
+#     **kwargs,
+# ) -> None:
+#     _ = plot_surf_roi(
+#         axes=ax,
+#         roi_map=roi_map,
+#         surf_mesh=load_surface_mesh(
+#             subject=subject,
+#             hemisphere=hemisphere,
+#             label=surface_type,
+#         ),
+#         hemi=hemisphere,
+#         threshold=np.finfo(np.float32).resolution,
+#         colorbar=False,
+#         bg_map=normalize_curv_map(
+#             load_surf_data(
+#                 load_surface_mesh(subject=subject, hemisphere=hemisphere, label="curv"),
+#             ),
+#             **kwargs,
+#         ),
+#         engine="matplotlib",
+#         view=view,
+#         cmap=cmap,
+#         avg_method="median",
+#     )
+
+
+# def reshape_dataarray_to_brain(
+#     data: xr.DataArray,
+#     *,
+#     brain_shape: tuple[int, ...],
+# ) -> np.ndarray:
+#     output_shape = (
+#         (data.sizes["presentation"], *brain_shape) if data.ndim == 2 else brain_shape
+#     )
+#     output = np.full(output_shape, fill_value=np.nan, dtype=data.data.dtype)
+#     output[..., data["x"].data, data["y"].data, data["z"].data] = data.data
+#     return output

@@ -8,7 +8,9 @@ description = "Utilities to download and interact with a curated collection of p
 readme = "README.md"
 requires-python = ">=3.14"
 license = { file = "LICENSE" }
-authors = [{ name = "Raj Magesh Gauthaman", email = "neurodatasets@raj-magesh.org" }]
+authors = [
+    { name = "Raj Magesh Gauthaman", email = "neurodatasets@raj-magesh.org" },
+]
 keywords = [
     "neural datasets",
     "fMRI",
@@ -33,6 +35,7 @@ dependencies = [
     "osfclient",
     "boto3",
     "numpy",
+    "pint",
     "pandas",
     "scipy",
     "Pillow",
@@ -43,17 +46,13 @@ dependencies = [
     "fast-simplification",
     "mne",
     "torch",
-    "xarray", # FIXME add [complete] when llvmlite can build
+    "xarray",
     "xdg-base-dirs",
 ]
-version = "0.1.0"  # FIXME(dynamic version): https://github.com/astral-sh/uv/issues/8714
+version = "0.1.0"
 
 [dependency-groups]
-dev = [
-    "ruff",
-    "pytest",
-    "sphinx",
-]
+dev = ["ruff", "pytest", "sphinx"]
 
 [tool.uv]
 environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]

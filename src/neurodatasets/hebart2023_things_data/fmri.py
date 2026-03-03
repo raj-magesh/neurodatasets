@@ -182,7 +182,7 @@ def load_brain_mask(subject: int) -> xr.DataArray:
         filepath = download_from_url(
             URLS[filename],
             filepath=CACHE_PATH / "downloads" / filename,
-            force=False,
+            overwrite=False,
         )
         return unzip(
             filepath,
@@ -211,7 +211,7 @@ def load_noise_ceilings(subject: int) -> xr.DataArray:
         filepath = download_from_url(
             URLS[filename],
             filepath=CACHE_PATH / "downloads" / filename,
-            force=False,
+            overwrite=False,
         )
         return unzip(
             filepath,
@@ -248,7 +248,7 @@ def load_betas(
         filepath = download_from_url(
             URLS[filename],
             filepath=CACHE_PATH / "downloads" / filename,
-            force=False,
+            overwrite=False,
         )
         return untar(
             filepath,

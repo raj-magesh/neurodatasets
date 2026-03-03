@@ -36,21 +36,21 @@ def download(
     *,
     monkey: Literal["F", "N"],
     normalized: bool = False,
-    force: bool = False,
+    overwrite: bool = False,
 ) -> Path:
     suffix = "normMUA" if normalized else "MUA_trials"
     url = f"{URL_ROOT}/monkey{monkey}/THINGS_{suffix}.mat"
     return download_from_url(
         url,
         filepath=CACHE_PATH / "download" / f"monkey_{monkey}" / f"THINGS_{suffix}.mat",
-        force=force,
+        overwrite=overwrite,
     )
 
 
 def download_electrode_mapping(
     *,
     monkey: Literal["F", "N"],
-    force: bool = False,
+    overwrite: bool = False,
 ) -> Path:
     url = f"https://gin.g-node.org/paolo_papale/TVSD/raw/master/monkey{monkey}/_logs/1024chns_mapping_20220105.mat"
     return download_from_url(
@@ -59,20 +59,20 @@ def download_electrode_mapping(
         / "download"
         / f"monkey_{monkey}"
         / "mapping_electrodes.mat",
-        force=force,
+        overwrite=overwrite,
     )
 
 
 def download_stimulus_mapping(
     *,
     monkey: Literal["F", "N"],
-    force: bool = False,
+    overwrite: bool = False,
 ) -> Path:
     url = f"https://gin.g-node.org/paolo_papale/TVSD/raw/master/monkey{monkey}/_logs/things_imgs.mat"
     return download_from_url(
         url,
         filepath=CACHE_PATH / "download" / f"monkey_{monkey}" / "mapping_stimuli.mat",
-        force=force,
+        overwrite=overwrite,
     )
 
 

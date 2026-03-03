@@ -16,13 +16,13 @@ if TYPE_CHECKING:
 FIGSHARE_ARTICLE_ID = 6845348
 
 
-def _download_dataset(*, force: bool = False) -> None:
+def _download_dataset(*, overwrite: bool = False) -> None:
     urls = get_url_dict(FIGSHARE_ARTICLE_ID)
     urls_data = {key: url for key, url in urls.items() if "natimg2800_M" in key}
     for filename, url in urls_data.items():
-        download_from_url(url, filepath=CACHE_PATH / filename, force=force)
+        download_from_url(url, filepath=CACHE_PATH / filename, overwrite=overwrite)
     filename = "images_natimg2800_all.mat"
-    download_from_url(urls[filename], filepath=CACHE_PATH / filename, force=force)
+    download_from_url(urls[filename], filepath=CACHE_PATH / filename, overwrite=overwrite)
 
 
 def create_data_assembly(*, mouse: str, date: str) -> xr.Dataset:

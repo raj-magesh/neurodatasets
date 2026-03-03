@@ -13,14 +13,14 @@ def download(
     *,
     filepath: Path,
     chunk_size: int = 32_768,
-    force: bool = True,
+    overwrite: bool = True,
 ) -> Path:
     url = "https://docs.google.com/uc?export=download"
 
     filepath = prepare_filepath(
         filepath=filepath,
         # url=f"{url}&{file_id}",
-        force=force,
+        overwrite=overwrite,
     )
     # if filepath.exists() and (not force):
     #     return filepath

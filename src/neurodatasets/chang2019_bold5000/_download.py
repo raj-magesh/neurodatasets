@@ -18,7 +18,7 @@ from neurodatasets.files import download_from_url, unzip
 from neurodatasets.files.figshare import get_url_dict
 
 
-def download_dataset(*, force: bool = False) -> None:
+def download_dataset(*, overwrite: bool = False) -> None:
     urls = get_url_dict(FIGSHARE_ARTICLE_ID_V2)
 
     for subject in tqdm(range(N_SUBJECTS), desc="subject", leave=False):
@@ -27,10 +27,10 @@ def download_dataset(*, force: bool = False) -> None:
             get_imagenames_filename(subject),  # image names
         ]
         for filename in filenames:
-            download_from_url(urls[str(filename)], filepath=filename, force=force)
+            download_from_url(urls[str(filename)], filepath=filename, overwrite=overwrite)
         for session in tqdm(range(N_SESSIONS[subject]), desc="session", leave=False):
             filename = get_betas_filename(subject, session)  # betas
-            download_from_url(urls[str(filename)], filepath=filename, force=force)
+            download_from_url(urls[str(filename)], filepath=filename, overwrite=overwrite)
 
     urls = get_url_dict(FIGSHARE_ARTICLE_ID_V1)
     urls = {
@@ -38,7 +38,7 @@ def download_dataset(*, force: bool = False) -> None:
         "stimuli.zip": URL_IMAGES,
     }
     for filename, url in urls.items():
-        filepath = download_from_url(url, filepath=Path(filename), force=force)
+        filepath = download_from_url(url, filepath=Path(filename), overwrite=overwrite)
         unzip(filepath, extract_dir=Path.cwd(), remove_zip=False)
 
     # ROI masks

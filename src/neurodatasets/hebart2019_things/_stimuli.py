@@ -20,9 +20,9 @@ def get_password() -> bytes:
     return text.split(" ")[-1].encode()
 
 
-def download_stimuli(*, force: bool = False) -> None:
+def download_stimuli(*, overwrite: bool = False) -> None:
     path = CACHE_PATH / "download" / "things.zip"
-    download_from_url(URL, filepath=path, force=force)
+    download_from_url(URL, filepath=path, overwrite=overwrite)
 
     unzip(path, extract_dir=CACHE_PATH, password=PASSWORD, remove_zip=False)
 
@@ -70,7 +70,7 @@ def load_metadata() -> pd.DataFrame:
         "reference": "whether this image was used as the reference image for the concept, and as part of the original triplet odd-one-out task",
         "imagenet": "whether this image is part of the ImageNet database",
     }
-    return metadata
+    return metadata.set_index("stimulus")
 
 
 class StimulusSet(Dataset):
@@ -80,11 +80,13 @@ class StimulusSet(Dataset):
         self.metadata = load_metadata()
         self.root = CACHE_PATH
 
-    def __getitem__(self: Self, idx: int) -> Image.Image:
-        row = self.metadata.iloc[idx]
-        filename, concept = row["stimulus"], row["concept"]
+    def __getitem__(self: Self, stimulus: str) -> Image.Image:
         return Image.open(
-            self.root / "images" / "object_images" / f"{concept}" / f"{filename}.jpg",
+            self.root
+            / "images"
+            / "object_images"
+            / self.metadata.loc[stimulus, "concept"]
+            / f"{stimulus}.jpg",
         )
 
     def __len__(self: Self) -> int:

@@ -25,7 +25,7 @@ N_OBJECT_CATEGORIES = 91
 N_STUFF_CATEGORIES = 91
 
 
-def download_text_annotations(*, force: bool = False) -> Path:
+def download_text_annotations(*, overwrite: bool = False) -> Path:
     url = "https://github.com/bgshih/cocotext/releases/download/dl/cocotext.v2.zip"
 
     directory = NEURODATASETS_HOME / "coco"
@@ -33,14 +33,14 @@ def download_text_annotations(*, force: bool = False) -> Path:
     filepath = download_from_url(
         url,
         filepath=directory / "COCO-Text_V2.0_trainval2014.zip",
-        force=force,
+        overwrite=overwrite,
     )
     unzip(filepath, extract_dir=directory / "annotations", remove_zip=False)
 
     return directory / "annotations" / "cocotext.v2.json"
 
 
-def download_annotations(*, force: bool = False) -> Path:
+def download_annotations(*, overwrite: bool = False) -> Path:
     urls = {
         "annotations": "http://images.cocodataset.org/annotations/annotations_trainval2017.zip",
         "stuff_annotations": "http://images.cocodataset.org/annotations/stuff_annotations_trainval2017.zip",
@@ -51,7 +51,7 @@ def download_annotations(*, force: bool = False) -> Path:
         filepath = download_from_url(
             url,
             filepath=directory / f"{label}_trainval2017.zip",
-            force=force,
+            overwrite=overwrite,
         )
         unzip(filepath, extract_dir=directory, remove_zip=False)
 

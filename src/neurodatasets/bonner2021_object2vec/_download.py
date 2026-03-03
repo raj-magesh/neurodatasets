@@ -4,18 +4,18 @@ from neurodatasets.bonner2021_object2vec._utilities import FILENAMES, N_SUBJECTS
 from neurodatasets.files import download_from_url, unzip
 
 
-def download_dataset(*, force: bool = False) -> None:
+def download_dataset(*, overwrite: bool = False) -> None:
     filepath = download_from_url(
         URLS["stimuli"],
         filepath=Path(FILENAMES["stimuli"]),
-        force=force,
+        overwrite=overwrite,
     )
     unzip(filepath, extract_dir=Path.cwd(), remove_zip=False)
 
     download_from_url(
         URLS["conditions"],
         filepath=Path(FILENAMES["conditions"]),
-        force=force,
+        overwrite=overwrite,
     )
 
     for subject in range(N_SUBJECTS):
@@ -23,7 +23,7 @@ def download_dataset(*, force: bool = False) -> None:
             download_from_url(
                 URLS[filetype][subject],
                 filepath=Path(FILENAMES[filetype][subject]),
-                force=force,
+                overwrite=overwrite,
             )
         for urls, filenames in zip(
             URLS["contrasts"].values(),
@@ -33,5 +33,7 @@ def download_dataset(*, force: bool = False) -> None:
             download_from_url(
                 urls[subject],
                 filepath=Path(filenames[subject]),
-                force=force,
+                overwrite=overwrite,
             )
+
+
