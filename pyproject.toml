@@ -4,20 +4,20 @@ build-backend = "uv_build"
 
 [project]
 name = "neurodatasets"
-description = "Utilities to download and interact with a curated collection of public neural datasets"
+description = "Download and interface with a curated collection of large-scale public neuroscience datasets"
 readme = "README.md"
 requires-python = ">=3.14"
-license = { file = "LICENSE" }
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 authors = [
     { name = "Raj Magesh Gauthaman", email = "neurodatasets@raj-magesh.org" },
 ]
 keywords = [
     "neural datasets",
-    "fMRI",
-    "EEG",
-    "MEG",
-    "Natural Scenes Dataset",
-    "THINGS datasets",
+    "Natural Scenes Dataset (NSD)",
+    "THINGS-data collection",
+    "THINGS Ventral stream Spiking Dataset (TVSD)",
+    "BOLD5000",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
