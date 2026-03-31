@@ -30,10 +30,7 @@ def create_data_assembly(subject: int) -> xr.DataArray:
     activations = loadmat(FILENAMES["activations"][subject], simplify_cells=True)[
         "betas"
     ]
-    x, y, z = np.unravel_index(
-        np.arange(np.prod(BRAIN_DIMENSIONS)),
-        BRAIN_DIMENSIONS,
-    )
+    x, y, z = np.indices(BRAIN_DIMENSIONS.shape, sparse=False).reshape(3, -1)
     n_voxels = activations.shape[1]
 
     roi_indices = loadmat(FILENAMES["rois"][subject], simplify_cells=True)["indices"]
@@ -45,8 +42,7 @@ def create_data_assembly(subject: int) -> xr.DataArray:
 
     # TODO check whether MATLAB's ordering differs from Python (FORTRAN vs C)
     return (
-        xr
-        .DataArray(
+        xr.DataArray(
             data=activations,
             dims=("condition", "neuroid", "repetition"),
             coords={
@@ -74,10 +70,9 @@ def create_data_assembly(subject: int) -> xr.DataArray:
             {
                 f"contrast_{contrast}": (
                     "neuroid",
-                    nib
-                    .load(FILENAMES["contrasts"][contrast][subject])
+                    nib.load(FILENAMES["contrasts"][contrast][subject])
                     .get_fdata()
-                    .reshape(-1),
+                    .ravel(),
                 )
                 for contrast in URLS["contrasts"]
             },
