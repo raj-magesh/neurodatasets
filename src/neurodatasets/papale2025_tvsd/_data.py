@@ -185,8 +185,10 @@ def load_time_course(*, monkey: Literal["F", "N"]) -> xr.DataArray:
             ],
             dtype=np.uint32,
         )
-        .assign(stimulus=lambda x: x["train_idx"] + x["test_idx"] - 1)
-        .assign(training_set=lambda x: x["train_idx"] > 0)
+        .assign(
+            stimulus=pd.col("train_idx") + pd.col("test_idx") - 1,
+            training_set=pd.col("train_idx") > 0,
+        )
         .drop(columns=["train_idx", "test_idx"])
     )
     return xr.DataArray(

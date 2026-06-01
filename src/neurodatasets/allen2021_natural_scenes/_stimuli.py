@@ -91,7 +91,7 @@ def load_annotations() -> xr.DataArray:
                 .from_dict(annotations["categories"])
                 .rename(columns={"id": "category_id"})
                 .assign(
-                    category_id=lambda x: x["category_id"] - 1,
+                    category_id=pd.col("category_id") - 1,
                     annotation_type=annotation_type,
                 )
                 .set_index("category_id"),
@@ -192,7 +192,7 @@ def load_nsd_metadata() -> pd.DataFrame:
                 for subject in range(N_SUBJECTS)
             },
         )
-        .assign(stimulus=lambda x: x["stimulus"].astype(np.uint32))
+        .assign(stimulus=pd.col("stimulus").astype(np.uint32))
         .set_index("stimulus")
     )
 

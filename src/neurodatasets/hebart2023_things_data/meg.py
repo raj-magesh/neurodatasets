@@ -111,16 +111,15 @@ def load_metadata(
     )
 
     return (
-        pd.read_csv(filepath, sep="\t")
+        pd
+        .read_csv(filepath, sep="\t")
         .assign(
-            stimulus=lambda x: [
-                filepath.split("/")[-1][:-4] for filepath in x["file_path"]
-            ],
-            trial_type=lambda x: x["trial_type"].replace({"exp": "experiment"}),
+            stimulus=[filepath.split("/")[-1][:-4] for filepath in pd.col("file_path")],
+            trial_type=pd.col("trial_type").replace({"exp": "experiment"}),
         )
         .assign(
-            category=lambda x: [
-                "_".join(stimulus.split("_")[:-1]) for stimulus in x["stimulus"]
+            category=[
+                "_".join(stimulus.split("_")[:-1]) for stimulus in pd.col("stimulus")
             ],
         )
     )
