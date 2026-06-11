@@ -70,7 +70,7 @@ def get_coco_to_nsd_mapping() -> dict[int, int]:
     }
 
 
-@cache("metadata/annotations.nc", path=CACHE_PATH)
+@cache("metadata/annotations.nc", root_dir=CACHE_PATH)
 def load_annotations() -> xr.DataArray:
     directory = download_annotations()
     mapping = get_coco_to_nsd_mapping()
@@ -132,7 +132,7 @@ def load_annotations() -> xr.DataArray:
     )
 
 
-@cache("metadata/captions.pkl", path=CACHE_PATH)
+@cache("metadata/captions.pkl", root_dir=CACHE_PATH)
 def load_captions() -> pd.DataFrame:
     mapping = get_coco_to_nsd_mapping()
 

@@ -26,7 +26,7 @@ def download_stimuli(*, overwrite: bool = False) -> None:
 
     unzip(path, extract_dir=CACHE_PATH, password=PASSWORD, remove_zip=False)
 
-    for zip_file in ("images_THINGS.zip", "images_THINGSplus-CC0.zip"):
+    for zip_file in ("_image_database_things.zip", "_image-database_CC0.zip"):
         unzip(
             CACHE_PATH / zip_file,
             extract_dir=CACHE_PATH / "images",
