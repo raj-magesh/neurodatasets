@@ -47,17 +47,17 @@ from neurodatasets.allen2021_natural_scenes._utilities import (
     compute_shared_stimuli,
     create_roi_selector,
 )
-# from neurodatasets.allen2021_natural_scenes._visualization import (
-#     SURFACE_ROI_MAPPINGS,
-#     convert_ndarray_to_nifti1image,
-#     load_surface_mesh,
-#     load_surface_roi,
-#     load_transformation,
-#     plot_brain_map,
-#     plot_rois,
-#     postprocess_mni_transform,
-#     postprocess_surface_transform,
-#     reshape_dataarray_to_brain,
-#     transform_data_to_mni,
-#     transform_data_to_surface,
-# )
+from neurodatasets.allen2021_natural_scenes._visualization import (
+    SURFACE_ROI_MAPPINGS,
+    convert_ndarray_to_nifti1image,
+    load_surface_mesh,
+    load_surface_roi,
+    load_transformation,
+    plot_brain_map,
+    plot_rois,
+    postprocess_mni_transform,
+    postprocess_surface_transform,
+    reshape_dataarray_to_brain,
+    transform_data_to_mni,
+    transform_data_to_surface,
+)
