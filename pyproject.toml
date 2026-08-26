@@ -1,12 +1,13 @@
 [build-system]
-requires = ["uv_build<0.12"]
+requires = ["uv_build<0.13"]
 build-backend = "uv_build"
 
 [project]
 name = "neurodatasets"
+version = "0.1.0"
 description = "Download and interface with a curated collection of large-scale public neuroscience datasets"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 authors = [
@@ -28,7 +29,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Typing :: Typed",
 ]
-urls = { repository = "https://codeberg.org/raj-magesh/neurodatasets" }
+urls = { source = "https://codeberg.org/raj-magesh/neurodatasets" }
 dependencies = [
     "loguru",
     "osfclient",
@@ -48,7 +49,6 @@ dependencies = [
     "xarray",
     "xdg-base-dirs",
 ]
-version = "0.1.0"
 
 [dependency-groups]
 dev = ["ruff", "ty", "pytest", "sphinx", "pandas-stubs"]
