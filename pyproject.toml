@@ -7,7 +7,7 @@ name = "neurodatasets"
 version = "0.1.0"
 description = "Download and interface with a curated collection of large-scale public neuroscience datasets"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14.7"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 authors = [
@@ -31,11 +31,11 @@ classifiers = [
 ]
 urls = { source = "https://codeberg.org/raj-magesh/neurodatasets" }
 dependencies = [
+    "requests",
     "loguru",
     "osfclient",
     "boto3",
     "numpy",
-    "pint",
     "pandas",
     "scipy",
     "Pillow",
@@ -47,13 +47,20 @@ dependencies = [
     "mne",
     "torch",
     "xarray",
-    "xdg-base-dirs",
+    "netCDF4",
+    "polycache @ git+https://codeberg.org/raj-magesh/polycache.git@main",
 ]
 
 [dependency-groups]
-dev = ["ruff", "ty", "pytest", "sphinx", "pandas-stubs"]
+dev = ["ruff", "ty", "deptry", "pytest", "sphinx", "pandas-stubs"]
 
 [tool.uv]
 required-environments = [
     "sys_platform == 'linux' and platform_machine == 'x86_64'",
 ]
+
+[tool.uv.sources]
+polycache = { path = "../../libraries/polycache", editable = true }
+
+[tool.deptry.per_rule_ignores]
+DEP003 = ["neurodatasets"]
