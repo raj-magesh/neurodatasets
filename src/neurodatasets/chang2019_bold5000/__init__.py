@@ -7,6 +7,11 @@ __all__ = (
     "load_stimulus_set",
 )
 
-from ._data import load_betas
-from ._stimuli import load_stimulus_set
-from ._utilities import IDENTIFIER, N_SESSIONS, N_SUBJECTS, ROIS
+from neurodatasets.chang2019_bold5000._data import load_betas
+from neurodatasets.chang2019_bold5000._stimuli import load_stimulus_set
+from neurodatasets.chang2019_bold5000._utilities import (
+    IDENTIFIER,
+    N_SESSIONS,
+    N_SUBJECTS,
+    ROIS,
+)

@@ -11,8 +11,7 @@ from tqdm.auto import tqdm
 
 from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import download_from_url, untar, unzip
-
-from ._utilities import IDENTIFIER
+from neurodatasets.hebart2023_things_data._utilities import IDENTIFIER
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -61,7 +60,7 @@ def load_nii(filepath: Path) -> xr.DataArray:
     dims = ["x", "y", "z"]
     if nii.ndim == 4:
         dims.append("presentation")
-    return xr.DataArray(  # noqa: PD013
+    return xr.DataArray(  # ruff: ignore[pandas-use-of-dot-stack]
         data=nii,
         dims=dims,
         coords={

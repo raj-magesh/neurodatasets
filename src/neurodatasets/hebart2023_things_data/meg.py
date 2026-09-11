@@ -18,8 +18,7 @@ import pandas as pd
 
 from neurodatasets._utilities import NEURODATASETS_HOME
 from neurodatasets.files import download_from_url, untar
-
-from ._utilities import IDENTIFIER
+from neurodatasets.hebart2023_things_data._utilities import IDENTIFIER
 
 URL = "https://plus.figshare.com/ndownloader/files/36827316"
 
@@ -56,7 +55,7 @@ def download_dataset() -> None:
         path.unlink()
 
 
-def load_raw_data(*, subject: int, session: int, run: int) -> mne.io.Raw:
+def load_raw_data(*, subject: int, session: int, run: int) -> mne.io.BaseRaw:
     directory = (
         BIDS_HOME
         / f"sub-BIGMEG{1 + subject}"
@@ -68,7 +67,7 @@ def load_raw_data(*, subject: int, session: int, run: int) -> mne.io.Raw:
 
 
 def extract_onsets(
-    data: mne.io.Raw,
+    data: mne.io.BaseRaw,
     *,
     optical_sensor_threshold: float = 1,
     max_delta: int = 20,
@@ -82,7 +81,7 @@ def extract_onsets(
     onsets_optical = (
         1
         + np.nonzero(
-            np.diff((optical_sensor >= optical_sensor_threshold).astype(int)) > 0
+            np.diff((optical_sensor >= optical_sensor_threshold).astype(int)) > 0,
         )[0]
     )
 
@@ -126,7 +125,7 @@ def load_metadata(
 
 
 def extract_epochs(
-    data: mne.io.Raw,
+    data: mne.io.BaseRaw,
     *,
     metadata: pd.DataFrame,
     t_min: float = -0.1,

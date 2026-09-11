@@ -4,6 +4,7 @@ import numpy as np
 import xarray as xr
 
 from neurodatasets._utilities import nii
+from neurodatasets.chang2019_bold5000._download import download_dataset
 from neurodatasets.chang2019_bold5000._utilities import (
     IDENTIFIER,
     N_SESSIONS,
@@ -12,8 +13,6 @@ from neurodatasets.chang2019_bold5000._utilities import (
     get_brain_mask_filename,
     get_imagenames_filename,
 )
-
-from ._download import download_dataset
 
 
 def load_betas(subject: int) -> xr.DataArray:

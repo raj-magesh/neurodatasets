@@ -8,9 +8,8 @@ from scipy.io import loadmat
 from neurodatasets._utilities import nii
 from neurodatasets.allen2021_natural_scenes import load_brain_mask
 from neurodatasets.files import s3
-
-from ._stimuli import load_stimulus_information
-from ._utilities import BUCKET_NAME, CACHE_PATH
+from neurodatasets.gifford2025_nsd_synthetic._stimuli import load_stimulus_information
+from neurodatasets.gifford2025_nsd_synthetic._utilities import BUCKET_NAME, CACHE_PATH
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -92,7 +91,7 @@ def load_betas(
     )
 
     brain_mask = load_brain_mask(subject=subject, resolution=resolution)
-    validity = load_validity(subject=subject, resolution=resolution).stack(  # noqa: PD013
+    validity = load_validity(subject=subject, resolution=resolution).stack(  # ruff: ignore[pandas-use-of-dot-stack]
         {"neuroid": ("x", "y", "z")},
         create_index=True,
     )
@@ -100,12 +99,12 @@ def load_betas(
     neuroid_filter = np.logical_and(neuroid_filter, validity)
     neuroid_filter = np.logical_and(
         neuroid_filter,
-        brain_mask.stack({"neuroid": ("x", "y", "z")}, create_index=True),  # noqa: PD013
+        brain_mask.stack({"neuroid": ("x", "y", "z")}, create_index=True),  # ruff: ignore[pandas-use-of-dot-stack]
     )
     stimuli = load_presentations()
 
     betas = (
-        xr  # noqa: PD013
+        xr  # ruff: ignore[pandas-use-of-dot-stack]
         .load_dataarray(CACHE_PATH / filepath)
         .rename(
             {

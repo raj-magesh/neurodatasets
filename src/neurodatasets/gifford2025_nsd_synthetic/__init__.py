@@ -7,9 +7,9 @@ __all__ = (
     "load_betas",
 )
 
-from ._data import load_betas
-from ._stimuli import StimulusSet
-from ._utilities import (
+from neurodatasets.gifford2025_nsd_synthetic._data import load_betas
+from neurodatasets.gifford2025_nsd_synthetic._stimuli import StimulusSet
+from neurodatasets.gifford2025_nsd_synthetic._utilities import (
     IDENTIFIER,
     N_SUBJECTS,
     compute_shared_stimuli,

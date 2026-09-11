@@ -1,3 +1,3 @@
 __all__ = ("StimulusSet",)
 
-from ._stimuli import StimulusSet
+from neurodatasets.hebart2019_things._stimuli import StimulusSet

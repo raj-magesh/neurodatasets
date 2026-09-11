@@ -7,8 +7,11 @@ from PIL import Image
 from torch.utils.data import Dataset
 
 from neurodatasets.files import s3
-
-from ._utilities import BUCKET_NAME, CACHE_PATH, IDENTIFIER
+from neurodatasets.gifford2025_nsd_synthetic._utilities import (
+    BUCKET_NAME,
+    CACHE_PATH,
+    IDENTIFIER,
+)
 
 N_STIMULI = 284
 N_STIMULI_SHARED = 220
